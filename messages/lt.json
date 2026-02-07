@@ -1,0 +1,56 @@
+{
+  "Common": {
+    "appName": "Turnyrų Lentelės",
+    "loading": "Kraunama...",
+    "error": "Klaida",
+    "save": "Išsaugoti",
+    "cancel": "Atšaukti",
+    "delete": "Ištrinti",
+    "edit": "Redaguoti",
+    "create": "Sukurti",
+    "back": "Grįžti"
+  },
+  "Nav": {
+    "home": "Pradžia",
+    "tournaments": "Turnyrai",
+    "teams": "Komandos",
+    "login": "Prisijungti",
+    "register": "Registruotis",
+    "logout": "Atsijungti",
+    "profile": "Profilis"
+  },
+  "Home": {
+    "title": "Turnyrų Valdymo Platforma",
+    "subtitle": "Kurkite ir valdykite turnyrus Baltijos regione",
+    "cta": "Pradėti dabar",
+    "features": {
+      "organize": "Organizuokite turnyrus",
+      "organizeDesc": "Sukurkite turnyrus su skirtingais formatais – apvaliosios grupės, viengubas ar dvigubas eliminacijos.",
+      "manage": "Valdykite komandas",
+      "manageDesc": "Registruokite komandas, valdykite žaidėjus ir stebėkite rezultatus.",
+      "track": "Stebėkite rezultatus",
+      "trackDesc": "Realaus laiko rezultatai ir turnyrinės lentelės su automatiniu atnaujinimu."
+    }
+  },
+  "Footer": {
+    "rights": "Visos teisės saugomos",
+    "about": "Apie mus",
+    "privacy": "Privatumo politika",
+    "terms": "Naudojimo sąlygos"
+  },
+  "Auth": {
+    "login": "Prisijungti",
+    "register": "Registruotis",
+    "loginTitle": "Sveiki sugrįžę",
+    "registerTitle": "Sukurti paskyrą",
+    "email": "El. paštas",
+    "password": "Slaptažodis",
+    "forgotPassword": "Pamiršote slaptažodį?",
+    "noAccount": "Neturite paskyros?",
+    "hasAccount": "Jau turite paskyrą?",
+    "orContinueWith": "arba tęskite su",
+    "google": "Tęsti su Google",
+    "checkEmail": "Patikrinkite el. paštą!",
+    "confirmationSent": "Išsiuntėme patvirtinimo nuorodą."
+  }
+}

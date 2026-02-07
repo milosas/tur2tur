@@ -1,0 +1,56 @@
+{
+  "Common": {
+    "appName": "Turnīru Tabulas",
+    "loading": "Ielādē...",
+    "error": "Kļūda",
+    "save": "Saglabāt",
+    "cancel": "Atcelt",
+    "delete": "Dzēst",
+    "edit": "Rediģēt",
+    "create": "Izveidot",
+    "back": "Atpakaļ"
+  },
+  "Nav": {
+    "home": "Sākums",
+    "tournaments": "Turnīri",
+    "teams": "Komandas",
+    "login": "Pieslēgties",
+    "register": "Reģistrēties",
+    "logout": "Iziet",
+    "profile": "Profils"
+  },
+  "Home": {
+    "title": "Turnīru Pārvaldības Platforma",
+    "subtitle": "Izveidojiet un pārvaldiet turnīrus Baltijas reģionā",
+    "cta": "Sākt tagad",
+    "features": {
+      "organize": "Organizējiet turnīrus",
+      "organizeDesc": "Izveidojiet turnīrus ar dažādiem formātiem — apļveida, vienkāršā vai dubultā izslēgšana.",
+      "manage": "Pārvaldiet komandas",
+      "manageDesc": "Reģistrējiet komandas, pārvaldiet spēlētājus un sekojiet rezultātiem.",
+      "track": "Sekojiet rezultātiem",
+      "trackDesc": "Reāllaika rezultāti un turnīru tabulas ar automātisku atjaunināšanu."
+    }
+  },
+  "Footer": {
+    "rights": "Visas tiesības aizsargātas",
+    "about": "Par mums",
+    "privacy": "Privātuma politika",
+    "terms": "Lietošanas noteikumi"
+  },
+  "Auth": {
+    "login": "Pieslēgties",
+    "register": "Reģistrēties",
+    "loginTitle": "Laipni lūdzam atpakaļ",
+    "registerTitle": "Izveidot kontu",
+    "email": "E-pasts",
+    "password": "Parole",
+    "forgotPassword": "Aizmirsāt paroli?",
+    "noAccount": "Nav konta?",
+    "hasAccount": "Jau ir konts?",
+    "orContinueWith": "vai turpiniet ar",
+    "google": "Turpināt ar Google",
+    "checkEmail": "Pārbaudiet e-pastu!",
+    "confirmationSent": "Nosūtījām apstiprinājuma saiti."
+  }
+}

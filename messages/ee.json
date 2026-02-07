@@ -1,0 +1,56 @@
+{
+  "Common": {
+    "appName": "Turniiritabelid",
+    "loading": "Laadimine...",
+    "error": "Viga",
+    "save": "Salvesta",
+    "cancel": "Tühista",
+    "delete": "Kustuta",
+    "edit": "Muuda",
+    "create": "Loo",
+    "back": "Tagasi"
+  },
+  "Nav": {
+    "home": "Avaleht",
+    "tournaments": "Turniirid",
+    "teams": "Meeskonnad",
+    "login": "Logi sisse",
+    "register": "Registreeru",
+    "logout": "Logi välja",
+    "profile": "Profiil"
+  },
+  "Home": {
+    "title": "Turniiride Haldamise Platvorm",
+    "subtitle": "Looge ja hallake turniire Balti regioonis",
+    "cta": "Alusta kohe",
+    "features": {
+      "organize": "Korraldage turniire",
+      "organizeDesc": "Looge turniire erinevate formaatidega — ringturniir, ühe- või kahekordne väljalangemine.",
+      "manage": "Hallake meeskondi",
+      "manageDesc": "Registreerige meeskondi, hallake mängijaid ja jälgige tulemusi.",
+      "track": "Jälgige tulemusi",
+      "trackDesc": "Reaalajas tulemused ja turniiritabelid automaatse uuendamisega."
+    }
+  },
+  "Footer": {
+    "rights": "Kõik õigused kaitstud",
+    "about": "Meist",
+    "privacy": "Privaatsuspoliitika",
+    "terms": "Kasutustingimused"
+  },
+  "Auth": {
+    "login": "Logi sisse",
+    "register": "Registreeru",
+    "loginTitle": "Tere tulemast tagasi",
+    "registerTitle": "Loo konto",
+    "email": "E-post",
+    "password": "Parool",
+    "forgotPassword": "Unustasid parooli?",
+    "noAccount": "Pole kontot?",
+    "hasAccount": "On juba konto?",
+    "orContinueWith": "või jätka",
+    "google": "Jätka Google'iga",
+    "checkEmail": "Kontrolli e-posti!",
+    "confirmationSent": "Saatsime kinnituslingi."
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "Common": {
+    "appName": "Tournament Tables",
+    "loading": "Loading...",
+    "error": "Error",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "back": "Back"
+  },
+  "Nav": {
+    "home": "Home",
+    "tournaments": "Tournaments",
+    "teams": "Teams",
+    "login": "Log in",
+    "register": "Sign up",
+    "logout": "Log out",
+    "profile": "Profile"
+  },
+  "Home": {
+    "title": "Tournament Management Platform",
+    "subtitle": "Create and manage tournaments in the Baltic region",
+    "cta": "Get started",
+    "features": {
+      "organize": "Organize Tournaments",
+      "organizeDesc": "Create tournaments with different formats — round robin, single or double elimination.",
+      "manage": "Manage Teams",
+      "manageDesc": "Register teams, manage players, and track results.",
+      "track": "Track Results",
+      "trackDesc": "Real-time scores and tournament brackets with automatic updates."
+    }
+  },
+  "Footer": {
+    "rights": "All rights reserved",
+    "about": "About us",
+    "privacy": "Privacy policy",
+    "terms": "Terms of service"
+  },
+  "Auth": {
+    "login": "Log in",
+    "register": "Sign up",
+    "loginTitle": "Welcome back",
+    "registerTitle": "Create account",
+    "email": "Email",
+    "password": "Password",
+    "forgotPassword": "Forgot password?",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?",
+    "orContinueWith": "or continue with",
+    "google": "Continue with Google",
+    "checkEmail": "Check your email!",
+    "confirmationSent": "We sent you a confirmation link."
+  }
+}
