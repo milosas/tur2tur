@@ -9,11 +9,12 @@ export async function middleware(request: NextRequest) {
   // First, run the intl middleware for locale routing
   const response = intlMiddleware(request);
 
-  // Then, refresh the Supabase session
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
+  // Refresh the Supabase session (only if credentials are configured)
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  if (supabaseUrl?.startsWith('http') && supabaseKey) {
+    const supabase = createServerClient(supabaseUrl, supabaseKey, {
       cookies: {
         getAll() {
           return request.cookies.getAll();
@@ -27,11 +28,10 @@ export async function middleware(request: NextRequest) {
           );
         },
       },
-    }
-  );
+    });
 
-  // This will refresh the session if needed
-  await supabase.auth.getUser();
+    await supabase.auth.getUser();
+  }
 
   return response;
 }
