@@ -37,11 +37,27 @@ export default async function TeamsPage({ params }: Props) {
     .eq("tournament_id", id)
     .order("created_at", { ascending: true });
 
+  const { data: groups } = await supabase
+    .from("tournament_groups")
+    .select("*")
+    .eq("tournament_id", id)
+    .order("name");
+
+  const { data: matches } = await supabase
+    .from("matches")
+    .select("*")
+    .eq("tournament_id", id)
+    .order("stage")
+    .order("round")
+    .order("match_number");
+
   return (
     <div className="container mx-auto px-4 py-8">
       <TeamsManager
         tournament={tournament}
         initialTeams={teams ?? []}
+        initialGroups={groups ?? []}
+        initialMatches={matches ?? []}
       />
     </div>
   );

@@ -18,12 +18,21 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { ArrowLeft, Play, Trophy, CheckCircle } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { ArrowLeft, Play, Trophy, CheckCircle, Clock, Calendar, X } from "lucide-react";
 import { TeamColorDot } from "@/components/tournament/TeamColorDot";
 import { generateGroupPlayoff, generateRoundRobin, generateSingleElimination, generateGroupReclass } from "@/lib/bracket";
 import { calculateStandings } from "@/lib/standings";
 import type { DBMatch, DBGroup, TeamNameMap } from "@/lib/types";
 import { dbMatchToMatch } from "@/lib/types";
+
+import { Label } from "@/components/ui/label";
 
 type Team = { id: string; name: string };
 type Tournament = {
@@ -32,6 +41,7 @@ type Tournament = {
   format: string;
   status: string;
   max_teams: number;
+  start_date?: string | null;
 };
 
 export function MatchesManager({
@@ -57,6 +67,22 @@ export function MatchesManager({
   const [fillingPlayoff, setFillingPlayoff] = useState(false);
   const [fillingReclass, setFillingReclass] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const [scheduleOpen, setScheduleOpen] = useState(false);
+  const [generatingSchedule, setGeneratingSchedule] = useState(false);
+  const [clearingSchedule, setClearingSchedule] = useState(false);
+  const [editingTimeMatch, setEditingTimeMatch] = useState<string | null>(null);
+  const [swappingTeam, setSwappingTeam] = useState<string | null>(null);
+
+  const tTeams = useTranslations("Teams");
+
+  // Schedule form state
+  const defaultStart = tournament.start_date
+    ? new Date(tournament.start_date).toISOString().slice(0, 16)
+    : new Date().toISOString().slice(0, 11) + "10:00";
+  const [scheduleStart, setScheduleStart] = useState(defaultStart);
+  const [matchDuration, setMatchDuration] = useState(30);
+  const [breakDuration, setBreakDuration] = useState(5);
+  const [parallelGroups, setParallelGroups] = useState(true);
 
   // Score editing state: matchId -> { home, away }
   const [scores, setScores] = useState<Record<string, { home: string; away: string }>>({});
@@ -77,6 +103,169 @@ export function MatchesManager({
   const allGroupComplete = groupMatches.length > 0 && groupMatches.every((m) => m.status === "completed");
   const groupRemaining = groupMatches.filter((m) => m.status !== "completed").length;
   const playoffEmpty = playoffMatches.every((m) => !m.home_team_id && !m.away_team_id);
+  const hasScheduledTimes = matches.some((m) => m.scheduled_at);
+  const hasGroupFormat = ["group_playoff", "group_reclass"].includes(tournament.format);
+
+  // Reorder matches so no team plays back-to-back (best effort).
+  // Takes a flat list of matches and returns them reordered.
+  function orderWithRest(matchList: DBMatch[]): DBMatch[] {
+    if (matchList.length <= 1) return matchList;
+
+    const result: DBMatch[] = [];
+    const remaining = [...matchList];
+    const lastPlayedSlot = new Map<string, number>(); // teamId -> last slot index
+
+    for (let slot = 0; remaining.length > 0; slot++) {
+      // Find the best match: one where neither team played in the previous slot
+      let bestIdx = -1;
+      let bestScore = -1;
+
+      for (let i = 0; i < remaining.length; i++) {
+        const m = remaining[i];
+        const homeSlot = lastPlayedSlot.get(m.home_team_id ?? "") ?? -999;
+        const awaySlot = lastPlayedSlot.get(m.away_team_id ?? "") ?? -999;
+        const homeGap = slot - homeSlot;
+        const awayGap = slot - awaySlot;
+        const minGap = Math.min(homeGap, awayGap);
+
+        // Higher score = more rest for both teams
+        if (minGap > bestScore) {
+          bestScore = minGap;
+          bestIdx = i;
+        }
+        // If we found a match where both teams rested at least 2 slots, good enough
+        if (minGap >= 2) break;
+      }
+
+      if (bestIdx === -1) bestIdx = 0;
+      const chosen = remaining.splice(bestIdx, 1)[0];
+      result.push(chosen);
+
+      if (chosen.home_team_id) lastPlayedSlot.set(chosen.home_team_id, slot);
+      if (chosen.away_team_id) lastPlayedSlot.set(chosen.away_team_id, slot);
+    }
+
+    return result;
+  }
+
+  async function handleGenerateSchedule() {
+    setGeneratingSchedule(true);
+    try {
+      const start = new Date(scheduleStart);
+      const slotMs = (matchDuration + breakDuration) * 60 * 1000;
+
+      // Separate matches by group
+      const groupedByGroup = new Map<string, DBMatch[]>();
+      const nonGroupMatches: DBMatch[] = [];
+
+      for (const m of matches) {
+        if (m.group_id) {
+          const list = groupedByGroup.get(m.group_id) ?? [];
+          list.push(m);
+          groupedByGroup.set(m.group_id, list);
+        } else {
+          nonGroupMatches.push(m);
+        }
+      }
+
+      const sortMatches = (a: DBMatch, b: DBMatch) =>
+        a.round - b.round || a.match_number - b.match_number;
+
+      const updates: { id: string; scheduled_at: string }[] = [];
+
+      if (parallelGroups && groupedByGroup.size > 0) {
+        // Each group runs its own timeline starting at startTime
+        let latestEnd = start.getTime();
+        for (const [, gMatches] of groupedByGroup) {
+          gMatches.sort(sortMatches);
+          const ordered = orderWithRest(gMatches);
+          let time = start.getTime();
+          for (const m of ordered) {
+            updates.push({ id: m.id, scheduled_at: new Date(time).toISOString() });
+            time += slotMs;
+          }
+          if (time > latestEnd) latestEnd = time;
+        }
+        // Non-group matches (playoff) start after latest group ends
+        let time = latestEnd;
+        nonGroupMatches.sort(sortMatches);
+        const orderedNonGroup = orderWithRest(nonGroupMatches);
+        for (const m of orderedNonGroup) {
+          updates.push({ id: m.id, scheduled_at: new Date(time).toISOString() });
+          time += slotMs;
+        }
+      } else {
+        // All matches in sequence — sort by stage, then reorder with rest
+        const allSorted = [...matches].sort((a, b) => {
+          const stagePriority: Record<string, number> = {
+            group: 0, round_robin: 0, reclass: 1, playoff: 2, elimination: 2,
+          };
+          const sa = stagePriority[a.stage ?? ""] ?? 1;
+          const sb = stagePriority[b.stage ?? ""] ?? 1;
+          return sa - sb || a.round - b.round || a.match_number - b.match_number;
+        });
+
+        // Group by stage, reorder within each stage, then concatenate
+        const stages = new Map<string, DBMatch[]>();
+        for (const m of allSorted) {
+          const key = m.stage ?? "other";
+          const list = stages.get(key) ?? [];
+          list.push(m);
+          stages.set(key, list);
+        }
+
+        const ordered: DBMatch[] = [];
+        for (const [, stageMatches] of stages) {
+          ordered.push(...orderWithRest(stageMatches));
+        }
+
+        let time = start.getTime();
+        for (const m of ordered) {
+          updates.push({ id: m.id, scheduled_at: new Date(time).toISOString() });
+          time += slotMs;
+        }
+      }
+
+      // Batch update DB
+      for (const up of updates) {
+        await supabase.from("matches").update({ scheduled_at: up.scheduled_at }).eq("id", up.id);
+      }
+
+      // Update local state
+      setMatches((prev) =>
+        prev.map((m) => {
+          const upd = updates.find((u) => u.id === m.id);
+          return upd ? { ...m, scheduled_at: upd.scheduled_at } : m;
+        })
+      );
+      setScheduleOpen(false);
+    } finally {
+      setGeneratingSchedule(false);
+    }
+  }
+
+  async function handleClearSchedule() {
+    setClearingSchedule(true);
+    try {
+      for (const m of matches) {
+        if (m.scheduled_at) {
+          await supabase.from("matches").update({ scheduled_at: null }).eq("id", m.id);
+        }
+      }
+      setMatches((prev) => prev.map((m) => ({ ...m, scheduled_at: null })));
+    } finally {
+      setClearingSchedule(false);
+    }
+  }
+
+  async function handleUpdateMatchTime(matchId: string, newTime: string) {
+    const scheduled_at = newTime ? new Date(newTime).toISOString() : null;
+    await supabase.from("matches").update({ scheduled_at }).eq("id", matchId);
+    setMatches((prev) =>
+      prev.map((m) => (m.id === matchId ? { ...m, scheduled_at } : m))
+    );
+    setEditingTimeMatch(null);
+  }
 
   async function handleGenerate() {
     if (teams.length < 2) return;
@@ -387,6 +576,16 @@ export function MatchesManager({
     }
   }
 
+  async function handleSwapTeam(matchId: string, side: "home" | "away", newTeamId: string) {
+    const field = side === "home" ? "home_team_id" : "away_team_id";
+    const value = newTeamId === "__none__" ? null : newTeamId;
+    await supabase.from("matches").update({ [field]: value }).eq("id", matchId);
+    setMatches((prev) =>
+      prev.map((m) => (m.id === matchId ? { ...m, [field]: value } : m))
+    );
+    setSwappingTeam(null);
+  }
+
   function getScoreValue(matchId: string, side: "home" | "away"): string {
     const match = matches.find((m) => m.id === matchId);
     if (scores[matchId]) return scores[matchId][side];
@@ -409,14 +608,75 @@ export function MatchesManager({
     const awayName = match.away_team_id ? (teamNames[match.away_team_id] ?? "?") : "TBD";
     const isCompleted = match.status === "completed";
     const canEdit = match.home_team_id && match.away_team_id;
+    const homeSwapKey = `${match.id}-home`;
+    const awaySwapKey = `${match.id}-away`;
+
+    const scheduledTime = match.scheduled_at
+      ? new Date(match.scheduled_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: false })
+      : null;
+    const scheduledDatetimeLocal = match.scheduled_at
+      ? new Date(match.scheduled_at).toISOString().slice(0, 16)
+      : "";
 
     return (
       <div key={match.id} className="flex items-center gap-2 rounded-lg border p-3">
+        {/* Scheduled time display / editor */}
+        <div className="w-20 shrink-0">
+          {editingTimeMatch === match.id ? (
+            <Input
+              type="datetime-local"
+              className="h-7 text-xs px-1"
+              defaultValue={scheduledDatetimeLocal}
+              autoFocus
+              onBlur={(e) => handleUpdateMatchTime(match.id, e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") handleUpdateMatchTime(match.id, (e.target as HTMLInputElement).value);
+                if (e.key === "Escape") setEditingTimeMatch(null);
+              }}
+            />
+          ) : scheduledTime ? (
+            <button
+              onClick={() => setEditingTimeMatch(match.id)}
+              className="flex items-center gap-1 hover:text-foreground transition-colors cursor-pointer"
+              title={t("editTime")}
+            >
+              <Clock className="h-4 w-4" />
+              <span className="text-sm font-bold text-foreground">{scheduledTime}</span>
+            </button>
+          ) : null}
+        </div>
+        {/* Home team — clickable to swap */}
         <div className="flex-1 flex items-center justify-end gap-2 text-sm font-medium">
-          <span>{homeName}</span>
+          {swappingTeam === homeSwapKey ? (
+            <Select
+              value={match.home_team_id ?? "__none__"}
+              onValueChange={(val) => handleSwapTeam(match.id, "home", val)}
+            >
+              <SelectTrigger className="h-7 w-auto min-w-[120px] text-xs">
+                <SelectValue placeholder={tTeams("selectTeam")} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="__none__">TBD</SelectItem>
+                {teams.map((team) => (
+                  <SelectItem key={team.id} value={team.id}>
+                    {team.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          ) : (
+            <button
+              onClick={() => setSwappingTeam(homeSwapKey)}
+              className="hover:underline cursor-pointer text-right"
+              title={tTeams("swapTeam")}
+            >
+              {homeName}
+            </button>
+          )}
           {match.home_team_id && <TeamColorDot teamId={match.home_team_id} teamNames={teamNames} />}
         </div>
-        <div className="flex items-center gap-1 min-w-[140px] justify-center">
+        {/* Score inputs */}
+        <div className="flex items-center gap-1 justify-center">
           {canEdit ? (
             <>
               <Input
@@ -434,27 +694,58 @@ export function MatchesManager({
                 value={getScoreValue(match.id, "away")}
                 onChange={(e) => setScoreValue(match.id, "away", e.target.value)}
               />
-              <Button
-                size="sm"
-                variant="outline"
-                className="h-8 px-2"
-                disabled={savingMatch === match.id}
-                onClick={() => handleSaveScore(match.id)}
-              >
-                {savingMatch === match.id ? "..." : t("saveScore")}
-              </Button>
             </>
           ) : (
             <Badge variant="outline">TBD</Badge>
           )}
         </div>
+        {/* Away team — clickable to swap */}
         <div className="flex-1 flex items-center gap-2 text-sm font-medium">
           {match.away_team_id && <TeamColorDot teamId={match.away_team_id} teamNames={teamNames} />}
-          <span>{awayName}</span>
+          {swappingTeam === awaySwapKey ? (
+            <Select
+              value={match.away_team_id ?? "__none__"}
+              onValueChange={(val) => handleSwapTeam(match.id, "away", val)}
+            >
+              <SelectTrigger className="h-7 w-auto min-w-[120px] text-xs">
+                <SelectValue placeholder={tTeams("selectTeam")} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="__none__">TBD</SelectItem>
+                {teams.map((team) => (
+                  <SelectItem key={team.id} value={team.id}>
+                    {team.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          ) : (
+            <button
+              onClick={() => setSwappingTeam(awaySwapKey)}
+              className="hover:underline cursor-pointer"
+              title={tTeams("swapTeam")}
+            >
+              {awayName}
+            </button>
+          )}
         </div>
-        {isCompleted && (
-          <CheckCircle className="h-4 w-4 text-green-500 shrink-0" />
-        )}
+        {/* Save + status — after away team */}
+        <div className="flex items-center gap-1 shrink-0">
+          {canEdit && (
+            <Button
+              size="sm"
+              variant="outline"
+              className="h-8 px-2"
+              disabled={savingMatch === match.id}
+              onClick={() => handleSaveScore(match.id)}
+            >
+              {savingMatch === match.id ? "..." : t("saveScore")}
+            </Button>
+          )}
+          {isCompleted && (
+            <CheckCircle className="h-4 w-4 text-green-500 shrink-0" />
+          )}
+        </div>
       </div>
     );
   }
@@ -528,6 +819,84 @@ export function MatchesManager({
                 </DialogFooter>
               </DialogContent>
             </Dialog>
+          )}
+          {hasMatches && (
+            <>
+              <Dialog open={scheduleOpen} onOpenChange={setScheduleOpen}>
+                <DialogTrigger asChild>
+                  <Button variant="outline">
+                    <Calendar className="h-4 w-4 mr-2" />
+                    {t("generateSchedule")}
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>{t("generateSchedule")}</DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-4 py-2">
+                    <div className="space-y-2">
+                      <Label>{t("startTime")}</Label>
+                      <Input
+                        type="datetime-local"
+                        value={scheduleStart}
+                        onChange={(e) => setScheduleStart(e.target.value)}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>{t("matchDuration")}</Label>
+                      <Input
+                        type="number"
+                        min={1}
+                        value={matchDuration}
+                        onChange={(e) => setMatchDuration(parseInt(e.target.value) || 1)}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>{t("breakDuration")}</Label>
+                      <Input
+                        type="number"
+                        min={0}
+                        value={breakDuration}
+                        onChange={(e) => setBreakDuration(parseInt(e.target.value) || 0)}
+                      />
+                    </div>
+                    {hasGroupFormat && (
+                      <div className="space-y-1">
+                        <label className="flex items-center gap-2 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={parallelGroups}
+                            onChange={(e) => setParallelGroups(e.target.checked)}
+                            className="rounded"
+                          />
+                          <span className="text-sm font-medium">{t("parallelGroups")}</span>
+                        </label>
+                        <p className="text-xs text-muted-foreground">{t("parallelGroupsHint")}</p>
+                      </div>
+                    )}
+                  </div>
+                  <DialogFooter>
+                    <Button variant="outline" onClick={() => setScheduleOpen(false)}>
+                      {tDash("cancel")}
+                    </Button>
+                    <Button onClick={handleGenerateSchedule} disabled={generatingSchedule}>
+                      {generatingSchedule ? t("generatingSchedule") : t("generateSchedule")}
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+              {hasScheduledTimes && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleClearSchedule}
+                  disabled={clearingSchedule}
+                >
+                  <X className="h-4 w-4 mr-1" />
+                  {clearingSchedule ? t("clearingSchedule") : t("clearSchedule")}
+                </Button>
+              )}
+            </>
           )}
           {tournament.format === "group_playoff" && allGroupComplete && playoffEmpty && (
             <Button onClick={handleFillPlayoff} disabled={fillingPlayoff}>

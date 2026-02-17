@@ -12,6 +12,7 @@ import { MatchList } from "@/components/tournament/MatchList";
 import { PlayoffBracket } from "@/components/tournament/PlayoffBracket";
 import { TeamDetailDialog } from "@/components/tournament/TeamDetailDialog";
 import { Badge } from "@/components/ui/badge";
+import { TournamentQR } from "@/components/tournament/TournamentQR";
 import { Users, Trophy, Mail, Phone } from "lucide-react";
 import type { TournamentStatus, DBMatch, DBGroup, TeamNameMap, Group, Match, PlayoffRound, DBProfile } from "@/lib/types";
 import { dbMatchToMatch, dbGroupToGroup } from "@/lib/types";
@@ -31,6 +32,7 @@ type DBTournament = {
   status: string;
   max_teams: number;
   start_date: string | null;
+  accent_colors: string[] | null;
   created_at: string;
 };
 
@@ -41,6 +43,7 @@ export function TournamentDetail({
   matches: dbMatches,
   organizer,
   organizerTournamentCount,
+  locale,
 }: {
   tournament: DBTournament;
   teams: DBTeam[];
@@ -48,10 +51,26 @@ export function TournamentDetail({
   matches: DBMatch[];
   organizer?: DBProfile | null;
   organizerTournamentCount?: number;
+  locale: string;
 }) {
   const t = useTranslations("Tournaments");
   const tCommon = useTranslations("Common");
   const tDash = useTranslations("Dashboard");
+
+  // Accent color helpers
+  const ac = tournament.accent_colors ?? [];
+  const hasColors = ac.length > 0;
+  const primaryColor = ac[0] ?? null;
+  const gradientBg = hasColors
+    ? ac.length === 1
+      ? ac[0]
+      : `linear-gradient(135deg, ${ac.join(", ")})`
+    : null;
+  const fadedGradient = hasColors
+    ? ac.length === 1
+      ? `linear-gradient(135deg, ${ac[0]}18 0%, transparent 60%)`
+      : `linear-gradient(135deg, ${ac[0]}18 0%, ${ac[ac.length - 1]}10 50%, transparent 80%)`
+    : null;
 
   const [selectedTeamId, setSelectedTeamId] = useState<string | null>(null);
   const selectedTeam = selectedTeamId ? teams.find((t) => t.id === selectedTeamId) ?? null : null;
@@ -246,8 +265,12 @@ export function TournamentDetail({
             {teams.map((team) => (
               <Card
                 key={team.id}
-                className="hover-lift cursor-pointer transition-all active:scale-[0.98]"
+                role="button"
+                tabIndex={0}
+                className="hover-lift cursor-pointer transition-[transform,opacity] active:scale-[0.98] overflow-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+                style={primaryColor ? { borderTopWidth: "2px", borderTopColor: primaryColor } : undefined}
                 onClick={() => handleTeamClick(team.id)}
+                onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleTeamClick(team.id); } }}
               >
                 <CardHeader className="pb-2">
                   <div className="flex items-center gap-3">
@@ -255,7 +278,7 @@ export function TournamentDetail({
                       <img
                         src={team.logo_url}
                         alt={team.name}
-                        className="h-9 w-9 sm:h-10 sm:w-10 rounded-full object-cover"
+                        className="h-9 w-9 sm:h-10 sm:w-10 rounded-full object-cover shrink-0"
                       />
                     ) : (
                       <div className="h-9 w-9 sm:h-10 sm:w-10 rounded-full bg-muted flex items-center justify-center shrink-0">
@@ -291,31 +314,68 @@ export function TournamentDetail({
 
   return (
     <>
-      <div className="mb-2 animate-fade-in">
-        <Button asChild variant="ghost" size="sm" className="tap-target">
-          <Link href="/tournaments">&larr; {tCommon("back")}</Link>
-        </Button>
-      </div>
-
-      <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-4 animate-fade-in-up">
-        <h1 className="text-2xl sm:text-3xl font-bold">{tournament.name}</h1>
-        <StatusBadge status={tournament.status as TournamentStatus} />
-      </div>
-
-      {tournament.description && (
-        <p className="text-muted-foreground mb-4 sm:mb-6 text-sm sm:text-base animate-fade-in-up" style={{ animationDelay: "50ms" }}>{tournament.description}</p>
-      )}
-
-      <div className="flex items-center gap-2 sm:gap-4 text-xs sm:text-sm text-muted-foreground mb-6 sm:mb-8 flex-wrap animate-fade-in-up" style={{ animationDelay: "100ms" }}>
-        <Badge variant="outline" className="text-xs">{formatLabel}</Badge>
-        <span>{t("teams", { count: teams.length })}</span>
-        {tournament.start_date && (
-          <span>
-            {t("startDate", {
-              date: new Date(tournament.start_date).toLocaleDateString(),
-            })}
-          </span>
+      {/* Hero banner with accent colors */}
+      <div
+        className="relative -mx-4 px-4 pt-4 pb-8 sm:-mx-4 sm:px-4 mb-6 rounded-b-2xl overflow-hidden"
+        style={fadedGradient ? { background: fadedGradient } : undefined}
+      >
+        {/* Gradient bar at top */}
+        {hasColors && (
+          <div
+            className="absolute top-0 left-0 right-0 h-1 animate-fade-in"
+            style={{ background: gradientBg! }}
+          />
         )}
+
+        <div className="mb-3 animate-fade-in">
+          <Button asChild variant="ghost" size="sm" className="tap-target">
+            <Link href="/tournaments">&larr; {tCommon("back")}</Link>
+          </Button>
+        </div>
+
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-4 animate-fade-in-up">
+          <h1 className="text-2xl sm:text-3xl font-bold">{tournament.name}</h1>
+          <StatusBadge status={tournament.status as TournamentStatus} />
+          <TournamentQR
+            tournamentId={tournament.id}
+            tournamentName={tournament.name}
+            locale={locale}
+          />
+        </div>
+
+        {tournament.description && (
+          <p className="text-muted-foreground mb-4 sm:mb-6 text-sm sm:text-base animate-fade-in-up" style={{ animationDelay: "50ms" }}>{tournament.description}</p>
+        )}
+
+        <div className="flex items-center gap-2 sm:gap-4 text-xs sm:text-sm text-muted-foreground flex-wrap animate-fade-in-up" style={{ animationDelay: "100ms" }}>
+          <Badge
+            variant="outline"
+            className="text-xs"
+            style={primaryColor ? { borderColor: `${primaryColor}60`, color: primaryColor } : undefined}
+          >
+            {formatLabel}
+          </Badge>
+          <span>{t("teams", { count: teams.length })}</span>
+          {tournament.start_date && (
+            <span>
+              {t("startDate", {
+                date: new Date(tournament.start_date).toLocaleDateString(),
+              })}
+            </span>
+          )}
+          {hasColors && (
+            <span className="flex items-center gap-1">
+              {ac.map((c, i) => (
+                <span
+                  key={i}
+                  className="w-2.5 h-2.5 rounded-full inline-block border border-white/50"
+                  style={{ backgroundColor: c }}
+                />
+              ))}
+            </span>
+          )}
+        </div>
+
       </div>
 
       {/* Show match/bracket view when tournament has started */}
@@ -329,7 +389,13 @@ export function TournamentDetail({
 
       {/* Organizer card */}
       {organizer && (
-        <Card className="mt-6 sm:mt-8 animate-fade-in-up" style={{ animationDelay: "200ms" }}>
+        <Card
+          className="mt-6 sm:mt-8 animate-fade-in-up overflow-hidden"
+          style={{
+            animationDelay: "200ms",
+            ...(hasColors ? { borderLeftWidth: "3px", borderLeftColor: primaryColor! } : {}),
+          }}
+        >
           <CardHeader className="pb-2 sm:pb-3">
             <CardTitle className="text-base sm:text-lg flex items-center gap-2">
               <Trophy className="h-4 w-4 sm:h-5 sm:w-5" />
@@ -337,8 +403,21 @@ export function TournamentDetail({
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
-            <div className="font-medium text-sm sm:text-base">
-              {organizer.full_name || organizer.email || t("organizer.anonymous")}
+            <div className="flex items-center gap-3">
+              {organizer.avatar_url ? (
+                <img
+                  src={organizer.avatar_url}
+                  alt={organizer.full_name || ""}
+                  className="h-10 w-10 rounded-full object-cover border shrink-0"
+                />
+              ) : (
+                <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center shrink-0">
+                  <Trophy className="h-5 w-5 text-muted-foreground" />
+                </div>
+              )}
+              <div className="font-medium text-sm sm:text-base">
+                {organizer.full_name || organizer.email || t("organizer.anonymous")}
+              </div>
             </div>
             {organizer.bio && (
               <p className="text-xs sm:text-sm text-muted-foreground">{organizer.bio}</p>

@@ -3,11 +3,11 @@ import { createClient } from "@/lib/supabase/server";
 import { TournamentDetail } from "./TournamentDetail";
 
 type PageProps = {
-  params: Promise<{ id: string }>;
+  params: Promise<{ id: string; locale: string }>;
 };
 
 export default async function TournamentDetailPage({ params }: PageProps) {
-  const { id } = await params;
+  const { id, locale } = await params;
   const supabase = await createClient();
 
   const { data: tournament } = await supabase
@@ -20,45 +20,49 @@ export default async function TournamentDetailPage({ params }: PageProps) {
     notFound();
   }
 
-  // Fetch teams for this tournament
-  const { data: teams } = await supabase
-    .from("teams")
-    .select("*, team_players(*)")
-    .eq("tournament_id", tournament.id)
-    .order("name");
+  // Block non-public or draft tournaments for non-owners
+  if (tournament.visibility !== "public" || tournament.status === "draft") {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user || user.id !== tournament.organizer_id) {
+      notFound();
+    }
+  }
 
-  // Fetch groups
-  const { data: groups } = await supabase
-    .from("tournament_groups")
-    .select("*")
-    .eq("tournament_id", tournament.id)
-    .order("name");
-
-  // Fetch matches
-  const { data: matches } = await supabase
-    .from("matches")
-    .select("*")
-    .eq("tournament_id", tournament.id)
-    .order("stage")
-    .order("round")
-    .order("match_number");
-
-  // Fetch organizer profile
-  const { data: organizer } = await supabase
-    .from("profiles")
-    .select("*")
-    .eq("id", tournament.organizer_id)
-    .single();
-
-  // Count organizer's tournaments
-  let organizerTournamentCount = 0;
-  if (organizer) {
-    const { count } = await supabase
+  // Parallel fetch all independent data
+  const [
+    { data: teams },
+    { data: groups },
+    { data: matches },
+    { data: organizer },
+    { count: organizerTournamentCount },
+  ] = await Promise.all([
+    supabase
+      .from("teams")
+      .select("*, team_players(*)")
+      .eq("tournament_id", tournament.id)
+      .order("name"),
+    supabase
+      .from("tournament_groups")
+      .select("*")
+      .eq("tournament_id", tournament.id)
+      .order("name"),
+    supabase
+      .from("matches")
+      .select("*")
+      .eq("tournament_id", tournament.id)
+      .order("stage")
+      .order("round")
+      .order("match_number"),
+    supabase
+      .from("profiles")
+      .select("*")
+      .eq("id", tournament.organizer_id)
+      .single(),
+    supabase
       .from("tournaments")
       .select("id", { count: "exact", head: true })
-      .eq("organizer_id", tournament.organizer_id);
-    organizerTournamentCount = count ?? 0;
-  }
+      .eq("organizer_id", tournament.organizer_id),
+  ]);
 
   return (
     <div className="container mx-auto px-4 py-6 sm:py-8 overflow-hidden">
@@ -68,7 +72,8 @@ export default async function TournamentDetailPage({ params }: PageProps) {
         groups={groups ?? []}
         matches={matches ?? []}
         organizer={organizer}
-        organizerTournamentCount={organizerTournamentCount}
+        organizerTournamentCount={organizerTournamentCount ?? 0}
+        locale={locale}
       />
     </div>
   );

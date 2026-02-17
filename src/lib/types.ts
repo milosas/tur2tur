@@ -63,6 +63,8 @@ export type Standing = {
 export type TeamNameMap = Record<string, string>;
 
 // DB types (matching Supabase schema)
+export type TournamentVisibility = "public" | "private";
+
 export type DBTournament = {
   id: string;
   organizer_id: string;
@@ -72,6 +74,9 @@ export type DBTournament = {
   status: string;
   max_teams: number;
   start_date: string | null;
+  venue: string | null;
+  accent_colors: string[];
+  visibility: TournamentVisibility;
   created_at: string;
 };
 
@@ -107,6 +112,8 @@ export type DBMatch = {
   completed_at: string | null;
 };
 
+export type SubscriptionTier = 'free' | 'single' | 'unlimited';
+
 export type DBProfile = {
   id: string;
   full_name: string | null;
@@ -115,6 +122,11 @@ export type DBProfile = {
   bio: string | null;
   avatar_url: string | null;
   locale: string;
+  subscription_tier: SubscriptionTier;
+  stripe_customer_id: string | null;
+  tournament_credits: number;
+  tournaments_created: number;
+  subscription_end_date: string | null;
   created_at: string;
 };
 

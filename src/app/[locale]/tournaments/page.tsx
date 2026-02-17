@@ -8,8 +8,10 @@ export default async function TournamentsPage() {
 
   const { data: tournaments } = await supabase
     .from("tournaments")
-    .select("*")
-    .order("created_at", { ascending: false });
+    .select("*, profiles(full_name, email, avatar_url), teams(count)")
+    .eq("visibility", "public")
+    .neq("status", "draft")
+    .order("start_date", { ascending: false, nullsFirst: false });
 
   return (
     <div className="container mx-auto px-4 py-6 sm:py-8">

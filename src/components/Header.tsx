@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { createClient } from "@/lib/supabase/client";
-import { Menu, X, LogOut } from "lucide-react";
+import { Menu, X, LogOut, UserCircle } from "lucide-react";
 import type { User } from "@supabase/supabase-js";
 
 export function Header() {
@@ -51,7 +51,7 @@ export function Header() {
 
   return (
     <header
-      className={`sticky top-0 z-50 w-full transition-all duration-300 ${
+      className={`sticky top-0 z-50 w-full transition-[background-color,border-color,box-shadow] duration-300 ${
         scrolled
           ? "glass border-b shadow-sm"
           : "bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b"
@@ -66,30 +66,42 @@ export function Header() {
           <nav className="hidden md:flex items-center gap-1 text-sm">
             <Link
               href="/tournaments"
-              className="px-3 py-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-all"
+              className="px-3 py-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
             >
               {t("tournaments")}
             </Link>
             <Link
               href="/formats"
-              className="px-3 py-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-all"
+              className="px-3 py-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
             >
               {t("formats")}
             </Link>
             {user && (
               <Link
                 href="/dashboard"
-                className="px-3 py-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-all"
+                className="px-3 py-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
               >
                 {t("dashboard")}
               </Link>
             )}
+            <Link
+              href="/pricing"
+              className="px-3 py-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+            >
+              {t("pricing")}
+            </Link>
           </nav>
         </div>
         <div className="hidden md:flex items-center gap-2">
           <LanguageSwitcher />
           {user ? (
             <>
+              <Button asChild variant="ghost" size="sm">
+                <Link href="/dashboard/profile">
+                  <UserCircle className="h-4 w-4 mr-1" />
+                  {t("profile")}
+                </Link>
+              </Button>
               <span className="text-sm text-muted-foreground truncate max-w-[150px]">
                 {user.email}
               </span>
@@ -114,7 +126,8 @@ export function Header() {
         <button
           className="md:hidden p-2 rounded-md hover:bg-muted transition-colors tap-target"
           onClick={() => setMobileOpen(!mobileOpen)}
-          aria-label="Toggle menu"
+          aria-label={mobileOpen ? "Close menu" : "Open menu"}
+          aria-expanded={mobileOpen}
         >
           <div className="relative w-5 h-5">
             <Menu className={`h-5 w-5 absolute inset-0 transition-all duration-300 ${mobileOpen ? "opacity-0 rotate-90 scale-75" : "opacity-100 rotate-0 scale-100"}`} />
@@ -134,39 +147,57 @@ export function Header() {
           className={`absolute inset-0 bg-black/20 backdrop-blur-sm transition-opacity duration-300 ${
             mobileOpen ? "opacity-100" : "opacity-0"
           }`}
+          style={{ touchAction: "none" }}
           onClick={() => setMobileOpen(false)}
+          aria-hidden="true"
         />
 
         {/* Menu panel */}
         <div
-          className={`relative bg-background border-t shadow-xl transition-all duration-300 ease-out ${
+          className={`relative bg-background border-t shadow-xl transition-[transform,opacity] duration-300 ease-out overscroll-y-contain ${
             mobileOpen ? "translate-y-0 opacity-100" : "-translate-y-4 opacity-0"
           }`}
         >
           <nav className="flex flex-col px-4 py-3">
             <Link
               href="/tournaments"
-              className="flex items-center text-base py-3 px-3 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-all tap-target"
+              className="flex items-center text-base py-3 px-3 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors tap-target"
               onClick={() => setMobileOpen(false)}
             >
               {t("tournaments")}
             </Link>
             <Link
               href="/formats"
-              className="flex items-center text-base py-3 px-3 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-all tap-target"
+              className="flex items-center text-base py-3 px-3 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors tap-target"
               onClick={() => setMobileOpen(false)}
             >
               {t("formats")}
             </Link>
             {user && (
-              <Link
-                href="/dashboard"
-                className="flex items-center text-base py-3 px-3 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-all tap-target"
-                onClick={() => setMobileOpen(false)}
-              >
-                {t("dashboard")}
-              </Link>
+              <>
+                <Link
+                  href="/dashboard"
+                  className="flex items-center text-base py-3 px-3 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors tap-target"
+                  onClick={() => setMobileOpen(false)}
+                >
+                  {t("dashboard")}
+                </Link>
+                <Link
+                  href="/dashboard/profile"
+                  className="flex items-center text-base py-3 px-3 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors tap-target"
+                  onClick={() => setMobileOpen(false)}
+                >
+                  {t("profile")}
+                </Link>
+              </>
             )}
+            <Link
+              href="/pricing"
+              className="flex items-center text-base py-3 px-3 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors tap-target"
+              onClick={() => setMobileOpen(false)}
+            >
+              {t("pricing")}
+            </Link>
           </nav>
           <div className="flex items-center gap-2 px-4 py-3 border-t">
             <LanguageSwitcher />

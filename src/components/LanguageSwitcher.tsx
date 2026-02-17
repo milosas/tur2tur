@@ -33,7 +33,7 @@ export function LanguageSwitcher() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="sm">
+        <Button variant="ghost" size="sm" aria-label="Select language">
           {currentLocale?.flag} {currentLocale?.code.toUpperCase()}
         </Button>
       </DropdownMenuTrigger>

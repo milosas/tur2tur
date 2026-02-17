@@ -40,4 +40,11 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-.vercel
+# supabase temp/local (contains project ref, pooler URL)
+supabase/.temp/
+
+# project notes (may contain project IDs)
+.continue-here.md
+
+# Windows artifacts
+nul

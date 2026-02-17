@@ -47,6 +47,8 @@ export default async function EditTournamentPage({ params }: Props) {
           start_date: tournament.start_date
             ? tournament.start_date.split("T")[0]
             : "",
+          accent_colors: tournament.accent_colors ?? [],
+          visibility: tournament.visibility ?? "public",
         }}
       />
     </div>
