@@ -25,7 +25,13 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const origin = req.headers.get("origin") || "http://localhost:3000";
+  const ALLOWED_ORIGINS = [
+    process.env.NEXT_PUBLIC_SITE_URL,
+    "https://tur2tur.com",
+    "http://localhost:3000",
+  ].filter(Boolean);
+  const rawOrigin = req.headers.get("origin") || "";
+  const origin = ALLOWED_ORIGINS.includes(rawOrigin) ? rawOrigin : ALLOWED_ORIGINS[0]!;
 
   const portalSession = await getStripe().billingPortal.sessions.create({
     customer: profile.stripe_customer_id,

@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { getTranslations, getLocale } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import { DashboardContent } from "./DashboardContent";
+import { PageBanner } from "@/components/PageBanner";
 import { FREE_TOURNAMENT_LIMIT } from "@/lib/stripe";
 
 export default async function DashboardPage() {
@@ -31,18 +32,24 @@ export default async function DashboardPage() {
   const locale = await getLocale();
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <DashboardContent
-        tournaments={tournaments ?? []}
-        locale={locale}
-        subscription={{
-          tier: (profile?.subscription_tier as "free" | "single" | "unlimited") ?? "free",
-          tournamentCount: profile?.tournaments_created ?? 0,
-          credits: profile?.tournament_credits ?? 0,
-          maxFree: FREE_TOURNAMENT_LIMIT,
-          subscriptionEnd: profile?.subscription_end_date ?? null,
-        }}
+    <>
+      <PageBanner
+        title={t("myTournaments")}
+        photo="football"
       />
-    </div>
+      <div className="container mx-auto px-4 py-8">
+        <DashboardContent
+          tournaments={tournaments ?? []}
+          locale={locale}
+          subscription={{
+            tier: (profile?.subscription_tier as "free" | "single" | "unlimited") ?? "free",
+            tournamentCount: profile?.tournaments_created ?? 0,
+            credits: profile?.tournament_credits ?? 0,
+            maxFree: FREE_TOURNAMENT_LIMIT,
+            subscriptionEnd: profile?.subscription_end_date ?? null,
+          }}
+        />
+      </div>
+    </>
   );
 }

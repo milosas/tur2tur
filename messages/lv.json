@@ -54,6 +54,7 @@
   },
   "Tournaments": {
     "title": "Turnīri",
+    "subtitle": "Apskatiet visus notiekošos, gaidāmos un pagātnes turnīrus",
     "noTournaments": "Pagaidām nav turnīru",
     "teams": "{count} komandas",
     "startDate": "Sākums: {date}",
@@ -111,6 +112,10 @@
     "ongoingTournaments": "Notiekošie turnīri",
     "upcomingTournaments": "Gaidāmie turnīri",
     "pastTournaments": "Pagājušie turnīri",
+    "allTournaments": "Visi",
+    "categoryOngoing": "Notiek",
+    "categoryUpcoming": "Reģistrācija",
+    "categoryPast": "Beidzies",
     "actions": {
       "printView": "Drukas skats (PDF)",
       "refereeCards": "Tiesnešu kartes (PDF)",
@@ -162,7 +167,11 @@
     },
     "maxTeams": "Maks. komandas",
     "startDate": "Sākuma datums",
+    "endDate": "Beigu datums",
     "save": "Saglabāt",
+    "saveDraft": "Saglabāt melnrakstu",
+    "publish": "Publicēt",
+    "statusDraft": "Melnraksts",
     "creating": "Izveido...",
     "saving": "Saglabā...",
     "dashboard": "Vadības panelis",
@@ -189,10 +198,27 @@
     "limitReached": "Turnīru limits sasniegts",
     "limitReachedDesc": "Esat izmantojis visas bezmaksas turnīru vietas. Jauniniet plānu vai iegādājieties papildu kredītus.",
     "venue": "Norises vieta",
-    "venuePlaceholder": "piem. Pilsētas sporta zāle"
+    "venuePlaceholder": "piem. Pilsētas sporta zāle",
+    "tournamentLogo": "Turnīra logotips",
+    "uploadLogo": "Augšupielādēt logotipu",
+    "uploading": "Augšupielādē...",
+    "logoHint": "PNG, JPG līdz 2 MB. Tiks rādīts blakus turnīra nosaukumam.",
+    "logoTooLarge": "Fails par lielu. Maks. 2 MB.",
+    "stats": {
+      "total": "Kopā turnīru",
+      "active": "Aktīvi tagad",
+      "upcoming": "Gaidāmie",
+      "completed": "Pabeigti"
+    },
+    "quickActions": "Ātrās darbības",
+    "emptyState": {
+      "title": "Sāciet savu pirmo turnīru",
+      "description": "Izveidojiet savu pirmo turnīru, lai sāktu. Izvēlieties no vairākiem formātiem un pārvaldiet visu vienuviet."
+    }
   },
   "Matches": {
     "title": "Spēles",
+    "tournamentPage": "Turnīra lapa",
     "generateBracket": "Ģenerēt shēmu",
     "generating": "Ģenerē...",
     "bracketGenerated": "Shēma veiksmīgi ģenerēta",

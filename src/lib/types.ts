@@ -74,9 +74,11 @@ export type DBTournament = {
   status: string;
   max_teams: number;
   start_date: string | null;
+  end_date: string | null;
   venue: string | null;
   accent_colors: string[];
   visibility: TournamentVisibility;
+  logo_url: string | null;
   created_at: string;
 };
 

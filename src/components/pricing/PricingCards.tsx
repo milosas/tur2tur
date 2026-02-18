@@ -1,7 +1,8 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
+import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -103,7 +104,7 @@ export function PricingCards({
             </Button>
           ) : (
             <Button asChild className="w-full h-12 text-base" variant="outline">
-              <a href="/auth/login">{t("loginToBuy")}</a>
+              <Link href="/auth/login">{t("loginToBuy")}</Link>
             </Button>
           )}
         </CardContent>
@@ -155,7 +156,7 @@ export function PricingCards({
             </Button>
           ) : (
             <Button asChild className="w-full">
-              <a href="/auth/login">{t("loginToBuy")}</a>
+              <Link href="/auth/login">{t("loginToBuy")}</Link>
             </Button>
           )}
         </CardContent>

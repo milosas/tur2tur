@@ -54,6 +54,7 @@
   },
   "Tournaments": {
     "title": "Turnyrai",
+    "subtitle": "Peržiūrėkite visus vykstančius, būsimus ir praėjusius turnyrus",
     "noTournaments": "Turnyrų kol kas nėra",
     "teams": "{count} komandų",
     "startDate": "Pradžia: {date}",
@@ -111,6 +112,10 @@
     "ongoingTournaments": "Vykstantys turnyrai",
     "upcomingTournaments": "Būsimi turnyrai",
     "pastTournaments": "Pasibaigę turnyrai",
+    "allTournaments": "Visi",
+    "categoryOngoing": "Vyksta",
+    "categoryUpcoming": "Registracija",
+    "categoryPast": "Pasibaigė",
     "actions": {
       "printView": "Spausdinimo vaizdas (PDF)",
       "refereeCards": "Teisėjų kortelės (PDF)",
@@ -162,7 +167,11 @@
     },
     "maxTeams": "Maks. komandų",
     "startDate": "Pradžios data",
+    "endDate": "Pabaigos data",
     "save": "Išsaugoti",
+    "saveDraft": "Išsaugoti juodraštį",
+    "publish": "Paskelbti",
+    "statusDraft": "Juodraštis",
     "creating": "Kuriama...",
     "saving": "Saugoma...",
     "dashboard": "Valdymo skydelis",
@@ -189,10 +198,27 @@
     "limitReached": "Turnyrų limitas pasiektas",
     "limitReachedDesc": "Panaudojote visas nemokamas turnyrų vietas. Atnaujinkite planą arba įsigykite papildomų kreditų.",
     "venue": "Vieta",
-    "venuePlaceholder": "pvz. Miesto sporto salė"
+    "venuePlaceholder": "pvz. Miesto sporto salė",
+    "tournamentLogo": "Turnyro logotipas",
+    "uploadLogo": "Įkelti logotipą",
+    "uploading": "Įkeliama...",
+    "logoHint": "PNG, JPG iki 2 MB. Bus rodomas šalia turnyro pavadinimo.",
+    "logoTooLarge": "Failas per didelis. Maks. 2 MB.",
+    "stats": {
+      "total": "Viso turnyrų",
+      "active": "Aktyvūs dabar",
+      "upcoming": "Artėjantys",
+      "completed": "Užbaigti"
+    },
+    "quickActions": "Greiti veiksmai",
+    "emptyState": {
+      "title": "Pradėkite savo pirmąjį turnyrą",
+      "description": "Sukurkite savo pirmąjį turnyrą, kad pradėtumėte. Pasirinkite iš kelių formatų ir valdykite viską vienoje vietoje."
+    }
   },
   "Matches": {
     "title": "Varžybos",
+    "tournamentPage": "Turnyro puslapis",
     "generateBracket": "Generuoti schemą",
     "generating": "Generuojama...",
     "bracketGenerated": "Schema sugeneruota sėkmingai",

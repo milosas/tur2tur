@@ -1,6 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import { TournamentsList } from "./TournamentsList";
+import { PageBanner } from "@/components/PageBanner";
 
 export default async function TournamentsPage() {
   const supabase = await createClient();
@@ -14,9 +15,15 @@ export default async function TournamentsPage() {
     .order("start_date", { ascending: false, nullsFirst: false });
 
   return (
-    <div className="container mx-auto px-4 py-6 sm:py-8">
-      <h1 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 animate-fade-in-up">{t("title")}</h1>
-      <TournamentsList tournaments={tournaments ?? []} />
-    </div>
+    <>
+      <PageBanner
+        title={t("title")}
+        subtitle={t("subtitle")}
+        photo="crowd"
+      />
+      <div className="container mx-auto px-4 py-6 sm:py-8">
+        <TournamentsList tournaments={tournaments ?? []} />
+      </div>
+    </>
   );
 }

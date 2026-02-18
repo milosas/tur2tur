@@ -54,6 +54,7 @@
   },
   "Tournaments": {
     "title": "Tournaments",
+    "subtitle": "Browse all ongoing, upcoming and past tournaments",
     "noTournaments": "No tournaments yet",
     "teams": "{count} teams",
     "startDate": "Starts: {date}",
@@ -111,6 +112,10 @@
     "ongoingTournaments": "Ongoing tournaments",
     "upcomingTournaments": "Upcoming tournaments",
     "pastTournaments": "Past tournaments",
+    "allTournaments": "All",
+    "categoryOngoing": "In progress",
+    "categoryUpcoming": "Registration",
+    "categoryPast": "Completed",
     "actions": {
       "printView": "Print View (PDF)",
       "refereeCards": "Referee Cards (PDF)",
@@ -162,7 +167,11 @@
     },
     "maxTeams": "Max teams",
     "startDate": "Start date",
+    "endDate": "End date",
     "save": "Save",
+    "saveDraft": "Save as draft",
+    "publish": "Publish",
+    "statusDraft": "Draft",
     "creating": "Creating...",
     "saving": "Saving...",
     "dashboard": "Dashboard",
@@ -189,10 +198,27 @@
     "limitReached": "Tournament limit reached",
     "limitReachedDesc": "You've used all your free tournament slots. Upgrade your plan or buy extra credits to create more tournaments.",
     "venue": "Venue",
-    "venuePlaceholder": "e.g. City Sports Hall"
+    "venuePlaceholder": "e.g. City Sports Hall",
+    "tournamentLogo": "Tournament Logo",
+    "uploadLogo": "Upload logo",
+    "uploading": "Uploading...",
+    "logoHint": "PNG, JPG up to 2 MB. Displayed next to the tournament name.",
+    "logoTooLarge": "File too large. Max 2 MB.",
+    "stats": {
+      "total": "Total Tournaments",
+      "active": "Active Now",
+      "upcoming": "Upcoming",
+      "completed": "Completed"
+    },
+    "quickActions": "Quick Actions",
+    "emptyState": {
+      "title": "Start Your First Tournament",
+      "description": "Create your first tournament to get started. Choose from multiple formats and manage everything in one place."
+    }
   },
   "Matches": {
     "title": "Matches",
+    "tournamentPage": "Tournament page",
     "generateBracket": "Generate Bracket",
     "generating": "Generating...",
     "bracketGenerated": "Bracket generated successfully",

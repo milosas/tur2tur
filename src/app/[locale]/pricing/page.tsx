@@ -1,6 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import { PricingCards } from "@/components/pricing/PricingCards";
+import { PageBanner } from "@/components/PageBanner";
 import type { SubscriptionTier } from "@/lib/types";
 
 export default async function PricingPage() {
@@ -22,14 +23,15 @@ export default async function PricingPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-12">
-      <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold mb-3">{t("title")}</h1>
-        <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-          {t("subtitle")}
-        </p>
+    <>
+      <PageBanner
+        title={t("title")}
+        subtitle={t("subtitle")}
+        photo="basketball"
+      />
+      <div className="container mx-auto px-4 py-12">
+        <PricingCards currentTier={currentTier} isLoggedIn={!!user} />
       </div>
-      <PricingCards currentTier={currentTier} isLoggedIn={!!user} />
-    </div>
+    </>
   );
 }

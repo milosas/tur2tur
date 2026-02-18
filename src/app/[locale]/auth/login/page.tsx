@@ -41,15 +41,23 @@ export default function LoginPage() {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${window.location.origin}/${locale}/auth/callback`,
+        redirectTo: `${window.location.origin}/${locale}/auth/callback?next=/${locale}/dashboard`,
       },
     });
     if (error) setError(error.message);
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center p-4">
-      <Card className="w-full max-w-md">
+    <div className="relative flex min-h-screen items-center justify-center p-4">
+      <div
+        className="absolute inset-0 -z-10 hero-bg-image"
+        style={{
+          backgroundImage: 'url(https://images.unsplash.com/photo-1459865264687-595d652de67e?w=1920&q=80)'
+        }}
+      >
+        <div className="absolute inset-0 hero-overlay" />
+      </div>
+      <Card className="w-full max-w-md relative">
         <CardHeader>
           <CardTitle className="text-center">{t("loginTitle")}</CardTitle>
         </CardHeader>

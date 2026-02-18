@@ -54,6 +54,7 @@
   },
   "Tournaments": {
     "title": "Turniirid",
+    "subtitle": "Vaadake kõiki käimasolevaid, tulevasi ja lõppenud turniire",
     "noTournaments": "Turniire pole veel",
     "teams": "{count} meeskonda",
     "startDate": "Algus: {date}",
@@ -111,6 +112,10 @@
     "ongoingTournaments": "Käimasolevad turniirid",
     "upcomingTournaments": "Tulevased turniirid",
     "pastTournaments": "Lõppenud turniirid",
+    "allTournaments": "Kõik",
+    "categoryOngoing": "Käib",
+    "categoryUpcoming": "Registreerimine",
+    "categoryPast": "Lõppenud",
     "actions": {
       "printView": "Prindiskeem (PDF)",
       "refereeCards": "Kohtunike kaardid (PDF)",
@@ -162,7 +167,11 @@
     },
     "maxTeams": "Max meeskondi",
     "startDate": "Alguskuupäev",
+    "endDate": "Lõppkuupäev",
     "save": "Salvesta",
+    "saveDraft": "Salvesta mustandina",
+    "publish": "Avalda",
+    "statusDraft": "Mustand",
     "creating": "Loomine...",
     "saving": "Salvestamine...",
     "dashboard": "Juhtpaneel",
@@ -189,10 +198,27 @@
     "limitReached": "Turniiride limiit täis",
     "limitReachedDesc": "Olete kasutanud kõik tasuta turniirikohad. Uuendage paketti või ostke lisakrediite.",
     "venue": "Toimumiskoht",
-    "venuePlaceholder": "nt. Linna spordisaal"
+    "venuePlaceholder": "nt. Linna spordisaal",
+    "tournamentLogo": "Turniiri logo",
+    "uploadLogo": "Laadi logo üles",
+    "uploading": "Üleslaadimine...",
+    "logoHint": "PNG, JPG kuni 2 MB. Kuvatakse turniiri nime kõrval.",
+    "logoTooLarge": "Fail on liiga suur. Max 2 MB.",
+    "stats": {
+      "total": "Kokku turniire",
+      "active": "Aktiivsed praegu",
+      "upcoming": "Tulevased",
+      "completed": "Lõpetatud"
+    },
+    "quickActions": "Kiirtoimingud",
+    "emptyState": {
+      "title": "Alusta oma esimest turniiri",
+      "description": "Loo oma esimene turniir alustamiseks. Vali mitmest formaadist ja halda kõike ühes kohas."
+    }
   },
   "Matches": {
     "title": "Mängud",
+    "tournamentPage": "Turniiri leht",
     "generateBracket": "Genereeri skeem",
     "generating": "Genereerimine...",
     "bracketGenerated": "Skeem edukalt genereeritud",

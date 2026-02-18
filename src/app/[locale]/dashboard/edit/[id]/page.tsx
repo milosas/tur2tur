@@ -45,10 +45,14 @@ export default async function EditTournamentPage({ params }: Props) {
           format: tournament.format,
           max_teams: tournament.max_teams,
           start_date: tournament.start_date
-            ? tournament.start_date.split("T")[0]
+            ? tournament.start_date.slice(0, 10)
             : "",
-          accent_colors: tournament.accent_colors ?? [],
+          end_date: tournament.end_date
+            ? tournament.end_date.slice(0, 10)
+            : "",
+          venue: tournament.venue ?? "",
           visibility: tournament.visibility ?? "public",
+          logo_url: tournament.logo_url ?? "",
         }}
       />
     </div>

@@ -36,8 +36,16 @@ export default function RegisterPage() {
 
   if (success) {
     return (
-      <div className="flex min-h-screen items-center justify-center p-4">
-        <Card className="w-full max-w-md">
+      <div className="relative flex min-h-screen items-center justify-center p-4">
+        <div
+          className="absolute inset-0 -z-10 hero-bg-image"
+          style={{
+            backgroundImage: 'url(https://images.unsplash.com/photo-1459865264687-595d652de67e?w=1920&q=80)'
+          }}
+        >
+          <div className="absolute inset-0 hero-overlay" />
+        </div>
+        <Card className="w-full max-w-md relative">
           <CardContent className="pt-6 text-center">
             <p className="text-lg font-medium">{t("checkEmail")}</p>
             <p className="text-muted-foreground mt-2">
@@ -50,8 +58,16 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center p-4">
-      <Card className="w-full max-w-md">
+    <div className="relative flex min-h-screen items-center justify-center p-4">
+      <div
+        className="absolute inset-0 -z-10 hero-bg-image"
+        style={{
+          backgroundImage: 'url(https://images.unsplash.com/photo-1459865264687-595d652de67e?w=1920&q=80)'
+        }}
+      >
+        <div className="absolute inset-0 hero-overlay" />
+      </div>
+      <Card className="w-full max-w-md relative">
         <CardHeader>
           <CardTitle className="text-center">{t("registerTitle")}</CardTitle>
         </CardHeader>

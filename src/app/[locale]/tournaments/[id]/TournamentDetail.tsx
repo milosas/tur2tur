@@ -6,15 +6,14 @@ import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { StatusBadge } from "@/components/tournament/StatusBadge";
 import { GroupStandings } from "@/components/tournament/GroupStandings";
 import { MatchList } from "@/components/tournament/MatchList";
 import { PlayoffBracket } from "@/components/tournament/PlayoffBracket";
 import { TeamDetailDialog } from "@/components/tournament/TeamDetailDialog";
 import { Badge } from "@/components/ui/badge";
 import { TournamentQR } from "@/components/tournament/TournamentQR";
-import { Users, Trophy, Mail, Phone } from "lucide-react";
-import type { TournamentStatus, DBMatch, DBGroup, TeamNameMap, Group, Match, PlayoffRound, DBProfile } from "@/lib/types";
+import { Users, Trophy, Mail, Phone, ArrowLeft } from "lucide-react";
+import type { DBMatch, DBGroup, TeamNameMap, Group, Match, PlayoffRound, DBProfile } from "@/lib/types";
 import { dbMatchToMatch, dbGroupToGroup } from "@/lib/types";
 
 type DBTeam = {
@@ -32,9 +31,32 @@ type DBTournament = {
   status: string;
   max_teams: number;
   start_date: string | null;
+  end_date: string | null;
   accent_colors: string[] | null;
+  logo_url: string | null;
   created_at: string;
 };
+
+function BackButton() {
+  const tCommon = useTranslations("Common");
+  return (
+    <Button
+      variant="ghost"
+      size="sm"
+      className="tap-target"
+      onClick={() => {
+        if (window.history.length > 2) {
+          window.history.back();
+        } else {
+          window.location.href = "/tournaments";
+        }
+      }}
+    >
+      <ArrowLeft className="h-4 w-4 mr-1" />
+      {tCommon("back")}
+    </Button>
+  );
+}
 
 export function TournamentDetail({
   tournament,
@@ -71,6 +93,37 @@ export function TournamentDetail({
       ? `linear-gradient(135deg, ${ac[0]}18 0%, transparent 60%)`
       : `linear-gradient(135deg, ${ac[0]}18 0%, ${ac[ac.length - 1]}10 50%, transparent 80%)`
     : null;
+
+  // Determine tournament category based on dates
+  const todayStr = new Date().toISOString().slice(0, 10);
+  const startStr = tournament.start_date?.slice(0, 10) ?? null;
+  const endStr = tournament.end_date?.slice(0, 10) ?? startStr;
+  const isActiveStatus = ["in_progress", "group_stage", "playoffs"].includes(tournament.status);
+  const isCompletedStatus = tournament.status === "completed";
+
+  let displayCategory: "ongoing" | "upcoming" | "past";
+  if (isActiveStatus) {
+    displayCategory = "ongoing";
+  } else if (isCompletedStatus) {
+    displayCategory = "past";
+  } else if (!startStr || startStr > todayStr) {
+    displayCategory = "upcoming";
+  } else if (startStr <= todayStr && (!endStr || endStr >= todayStr)) {
+    displayCategory = "ongoing";
+  } else {
+    displayCategory = "past";
+  }
+
+  const categoryLabels = {
+    ongoing: t("categoryOngoing"),
+    upcoming: t("categoryUpcoming"),
+    past: t("categoryPast"),
+  };
+  const categoryVariants: Record<string, "default" | "secondary" | "outline"> = {
+    ongoing: "default",
+    upcoming: "secondary",
+    past: "outline",
+  };
 
   const [selectedTeamId, setSelectedTeamId] = useState<string | null>(null);
   const selectedTeam = selectedTeamId ? teams.find((t) => t.id === selectedTeamId) ?? null : null;
@@ -328,14 +381,19 @@ export function TournamentDetail({
         )}
 
         <div className="mb-3 animate-fade-in">
-          <Button asChild variant="ghost" size="sm" className="tap-target">
-            <Link href="/tournaments">&larr; {tCommon("back")}</Link>
-          </Button>
+          <BackButton />
         </div>
 
         <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-4 animate-fade-in-up">
+          {tournament.logo_url && (
+            <img
+              src={tournament.logo_url}
+              alt={tournament.name}
+              className="h-16 w-16 sm:h-20 sm:w-20 rounded-xl object-cover border shrink-0"
+            />
+          )}
           <h1 className="text-2xl sm:text-3xl font-bold">{tournament.name}</h1>
-          <StatusBadge status={tournament.status as TournamentStatus} />
+          <Badge variant={categoryVariants[displayCategory]}>{categoryLabels[displayCategory]}</Badge>
           <TournamentQR
             tournamentId={tournament.id}
             tournamentName={tournament.name}

@@ -25,7 +25,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ArrowLeft, Play, Trophy, CheckCircle, Clock, Calendar, X } from "lucide-react";
+import { ArrowLeft, Play, Trophy, CheckCircle, Clock, Calendar, X, ExternalLink } from "lucide-react";
 import { TeamColorDot } from "@/components/tournament/TeamColorDot";
 import { generateGroupPlayoff, generateRoundRobin, generateSingleElimination, generateGroupReclass } from "@/lib/bracket";
 import { calculateStandings } from "@/lib/standings";
@@ -792,7 +792,15 @@ export function MatchesManager({
 
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold">{tournament.name}</h1>
+          <div className="flex items-center gap-3">
+            <h1 className="text-2xl font-bold">{tournament.name}</h1>
+            <Button asChild variant="outline" size="sm">
+              <Link href={`/tournaments/${tournament.id}`} target="_blank">
+                <ExternalLink className="h-4 w-4 mr-1" />
+                {t("tournamentPage")}
+              </Link>
+            </Button>
+          </div>
           <p className="text-muted-foreground">{t("title")}</p>
         </div>
         <div className="flex items-center gap-2">

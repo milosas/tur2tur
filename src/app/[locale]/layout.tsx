@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { ThemeProvider } from "@/components/ThemeProvider";
 import "../globals.css";
 
 const geistSans = Geist({
@@ -19,8 +20,31 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Turnyrų Lentelės | Baltic Tournament Planner",
-  description: "Tournament management platform for the Baltic region",
+  title: {
+    default: "tur2tur — Baltic Tournament Planner",
+    template: "%s | tur2tur",
+  },
+  description:
+    "Create and manage sports tournaments in the Baltic region. Group stages, playoffs, brackets, live scores — all in one place.",
+  metadataBase: new URL("https://tur2tur.com"),
+  openGraph: {
+    type: "website",
+    siteName: "tur2tur",
+    title: "tur2tur — Baltic Tournament Planner",
+    description:
+      "Create and manage sports tournaments in the Baltic region. Group stages, playoffs, brackets, live scores.",
+    url: "https://tur2tur.com",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "tur2tur — Baltic Tournament Planner",
+    description:
+      "Create and manage sports tournaments in the Baltic region.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export function generateStaticParams() {
@@ -42,19 +66,21 @@ export default async function LocaleLayout({ children, params }: Props) {
   const messages = await getMessages();
 
   return (
-    <html lang={locale}>
+    <html lang={locale} suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-background text-foreground`}
       >
-        <NextIntlClientProvider messages={messages}>
-          <div className="flex min-h-screen flex-col">
-            <Header />
-            <main className="flex-1">
-              {children}
-            </main>
-            <Footer />
-          </div>
-        </NextIntlClientProvider>
+        <ThemeProvider>
+          <NextIntlClientProvider messages={messages}>
+            <div className="flex min-h-screen flex-col">
+              <Header />
+              <main className="flex-1">
+                {children}
+              </main>
+              <Footer />
+            </div>
+          </NextIntlClientProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

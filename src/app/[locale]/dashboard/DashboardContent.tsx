@@ -5,11 +5,10 @@ import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { StatusBadge } from "@/components/tournament/StatusBadge";
 import { DeleteDialog } from "@/components/tournament/DeleteDialog";
 import { TournamentQR } from "@/components/tournament/TournamentQR";
-import { Plus, Pencil, Users, Swords, UserCircle, Globe, Lock, Crown, Zap } from "lucide-react";
-import type { TournamentStatus, SubscriptionTier } from "@/lib/types";
+import { Plus, Pencil, Users, Swords, UserCircle, Globe, Lock, Crown, Zap, ExternalLink } from "lucide-react";
+import type { SubscriptionTier } from "@/lib/types";
 
 type DBTournament = {
   id: string;
@@ -19,8 +18,10 @@ type DBTournament = {
   status: string;
   max_teams: number;
   start_date: string | null;
+  end_date: string | null;
   accent_colors: string[] | null;
   visibility: string | null;
+  logo_url: string | null;
   created_at: string;
 };
 
@@ -43,13 +44,41 @@ export function DashboardContent({
 }) {
   const t = useTranslations("Dashboard");
   const tTeams = useTranslations("Teams");
+  const tTour = useTranslations("Tournaments");
+
+  const todayStr = new Date().toISOString().slice(0, 10);
+
+  function getTournamentCategory(tour: DBTournament): "ongoing" | "upcoming" | "past" | "draft" {
+    if (tour.status === "draft") return "draft";
+    const isActive = ["in_progress", "group_stage", "playoffs"].includes(tour.status);
+    const isCompleted = tour.status === "completed";
+    const startStr = tour.start_date?.slice(0, 10) ?? null;
+    const endStr = tour.end_date?.slice(0, 10) ?? startStr;
+    if (isActive) return "ongoing";
+    if (isCompleted) return "past";
+    if (!startStr || startStr > todayStr) return "upcoming";
+    if (startStr <= todayStr && (!endStr || endStr >= todayStr)) return "ongoing";
+    return "past";
+  }
+
+  const categoryLabels: Record<string, string> = {
+    ongoing: tTour("categoryOngoing"),
+    upcoming: tTour("categoryUpcoming"),
+    past: tTour("categoryPast"),
+    draft: t("statusDraft"),
+  };
+  const categoryVariants: Record<string, "default" | "secondary" | "outline"> = {
+    ongoing: "default",
+    upcoming: "secondary",
+    past: "outline",
+    draft: "outline",
+  };
 
   return (
     <>
       <div className="flex items-center justify-between mb-8 flex-wrap gap-4">
         <div>
-          <h1 className="text-3xl font-bold">{t("myTournaments")}</h1>
-          <div className="flex items-center gap-2 mt-2">
+          <div className="flex items-center gap-2">
             {subscription.tier === "unlimited" ? (
               <>
                 <Badge className="bg-yellow-100 text-yellow-800 border-yellow-300 gap-1">
@@ -150,7 +179,21 @@ export function DashboardContent({
               )}
               <CardHeader className="relative">
                 <div className="flex items-start justify-between gap-2">
-                  <CardTitle className="text-lg">{tournament.name}</CardTitle>
+                  <div className="flex items-center gap-2">
+                    {tournament.logo_url && (
+                      <img
+                        src={tournament.logo_url}
+                        alt=""
+                        className="h-16 w-16 rounded-lg object-cover shrink-0"
+                      />
+                    )}
+                    <CardTitle className="text-lg">{tournament.name}</CardTitle>
+                    <Button asChild variant="ghost" size="icon" className="h-7 w-7 shrink-0">
+                      <Link href={`/tournaments/${tournament.id}`} target="_blank">
+                        <ExternalLink className="h-3.5 w-3.5" />
+                      </Link>
+                    </Button>
+                  </div>
                   <div className="flex items-center gap-1.5">
                     {tournament.visibility === "private" ? (
                       <Badge variant="outline" className="text-xs gap-1">
@@ -163,9 +206,10 @@ export function DashboardContent({
                         {t("visibilityPublic")}
                       </Badge>
                     )}
-                    <StatusBadge
-                      status={tournament.status as TournamentStatus}
-                    />
+                    {(() => {
+                      const cat = getTournamentCategory(tournament);
+                      return <Badge variant={categoryVariants[cat]}>{categoryLabels[cat]}</Badge>;
+                    })()}
                   </div>
                 </div>
               </CardHeader>
@@ -188,6 +232,7 @@ export function DashboardContent({
                   {tournament.start_date && (
                     <span>
                       {new Date(tournament.start_date).toLocaleDateString()}
+                      {tournament.end_date && ` – ${new Date(tournament.end_date).toLocaleDateString()}`}
                     </span>
                   )}
                 </div>
