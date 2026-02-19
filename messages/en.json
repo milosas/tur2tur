@@ -93,14 +93,16 @@
       "scheduled": "Scheduled",
       "completed": "Completed",
       "in_progress": "In Progress",
-      "round": "Round {round}"
+      "round": "Round {round}",
+      "penalty": "tiebreaker"
     },
     "playoff": {
       "quarterfinals": "Quarterfinals",
       "semifinals": "Semifinals",
       "final": "Final",
       "tbd": "TBD",
-      "round": "Round {round}"
+      "round": "Round {round}",
+      "penalty": "tiebreaker"
     },
     "today": "Today",
     "upcoming": "Coming Soon",
@@ -266,7 +268,10 @@
     "editTime": "Edit time",
     "clearSchedule": "Clear Schedule",
     "scheduledAt": "Time",
-    "clearingSchedule": "Clearing..."
+    "clearingSchedule": "Clearing...",
+    "penaltyLabel": "Tiebreaker",
+    "penaltyLabelPlaceholder": "e.g. Penalties",
+    "penaltyDefault": "tiebreaker"
   },
   "Teams": {
     "title": "Teams",
@@ -317,7 +322,7 @@
     "singleElimination": {
       "name": "Single Elimination",
       "desc": "Lose once and you're out! The fastest tournament format — each match eliminates one team until only the champion remains.",
-      "howItWorks": "1. Teams are placed in a bracket (byes for non-power-of-2 counts)\n2. Winners advance, losers are eliminated\n3. Each round halves the field until the final",
+      "howItWorks": "1. Teams are paired up in an elimination bracket\n2. Winners advance, losers are eliminated\n3. Each round halves the field until the final",
       "bestFor": "4-64 teams. Quick format when time is limited.",
       "example": "8 teams → Quarterfinals (4 matches) → Semifinals (2) → Final (1) = 7 matches total"
     },

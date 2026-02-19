@@ -11,11 +11,25 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 const locales = [
-  { code: "lt", label: "Lietuvių", flag: "🇱🇹" },
-  { code: "lv", label: "Latviešu", flag: "🇱🇻" },
-  { code: "ee", label: "Eesti", flag: "🇪🇪" },
-  { code: "en", label: "English", flag: "🇬🇧" },
+  { code: "lt", label: "Lietuvių", country: "lt" },
+  { code: "lv", label: "Latviešu", country: "lv" },
+  { code: "ee", label: "Eesti", country: "ee" },
+  { code: "en", label: "English", country: "gb" },
 ];
+
+function Flag({ country, size = 20 }: { country: string; size?: number }) {
+  return (
+    <img
+      src={`https://flagcdn.com/w40/${country}.png`}
+      srcSet={`https://flagcdn.com/w80/${country}.png 2x`}
+      width={size}
+      height={Math.round(size * 0.75)}
+      alt=""
+      className="inline-block rounded-sm object-cover"
+      style={{ width: size, height: Math.round(size * 0.75) }}
+    />
+  );
+}
 
 export function LanguageSwitcher() {
   const locale = useLocale();
@@ -33,8 +47,9 @@ export function LanguageSwitcher() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="sm" aria-label="Select language">
-          {currentLocale?.flag} {currentLocale?.code.toUpperCase()}
+        <Button variant="ghost" size="sm" aria-label="Select language" className="gap-1.5">
+          {currentLocale && <Flag country={currentLocale.country} size={18} />}
+          {currentLocale?.code.toUpperCase()}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
@@ -42,9 +57,10 @@ export function LanguageSwitcher() {
           <DropdownMenuItem
             key={l.code}
             onClick={() => switchLocale(l.code)}
-            className={l.code === locale ? "bg-accent" : ""}
+            className={`gap-2 ${l.code === locale ? "bg-accent" : ""}`}
           >
-            {l.flag} {l.label}
+            <Flag country={l.country} size={20} />
+            {l.label}
           </DropdownMenuItem>
         ))}
       </DropdownMenuContent>

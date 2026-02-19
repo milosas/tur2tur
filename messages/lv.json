@@ -93,14 +93,16 @@
       "scheduled": "Plānots",
       "completed": "Pabeigts",
       "in_progress": "Notiek",
-      "round": "Kārta {round}"
+      "round": "Kārta {round}",
+      "penalty": "pēc pendēlēm"
     },
     "playoff": {
       "quarterfinals": "Ceturtdaļfināli",
       "semifinals": "Pusfināli",
       "final": "Fināls",
       "tbd": "Tiks noteikts",
-      "round": "Kārta {round}"
+      "round": "Kārta {round}",
+      "penalty": "pēc pendēlēm"
     },
     "today": "Šodien",
     "upcoming": "Tuvākajā laikā",
@@ -266,7 +268,10 @@
     "editTime": "Rediģēt laiku",
     "clearSchedule": "Notīrīt grafiku",
     "scheduledAt": "Laiks",
-    "clearingSchedule": "Notīra..."
+    "clearingSchedule": "Notīra...",
+    "penaltyLabel": "Papildus rezultāts",
+    "penaltyLabelPlaceholder": "piem. Pendeles",
+    "penaltyDefault": "pēc pendēlēm"
   },
   "Teams": {
     "title": "Komandas",
@@ -317,7 +322,7 @@
     "singleElimination": {
       "name": "Vienkāršā izslēgšana (Single Elimination)",
       "desc": "Zaudē — izkriti! Ātrākais turnīra formāts — katra spēle izslēdz vienu komandu līdz finālam.",
-      "howItWorks": "1. Komandas iedalītas shēmā (brīvās vietas, ja ne 2 pakāpe)\n2. Uzvarētāji turpina, zaudētāji izslēgti\n3. Katra kārta uz pusi samazina dalībnieku skaitu līdz finālam",
+      "howItWorks": "1. Komandas sadalītas pa pāriem izslēgšanas shēmā\n2. Uzvarētāji turpina, zaudētāji izslēgti\n3. Katra kārta uz pusi samazina dalībnieku skaitu līdz finālam",
       "bestFor": "4-64 komandas. Ātrs formāts, kad laiks ir ierobežots.",
       "example": "8 komandas → Ceturtdaļfināli (4) → Pusfināli (2) → Fināls (1) = 7 spēles"
     },

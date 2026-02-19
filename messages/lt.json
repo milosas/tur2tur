@@ -93,14 +93,16 @@
       "scheduled": "Suplanuota",
       "completed": "Baigta",
       "in_progress": "Vyksta",
-      "round": "Turas {round}"
+      "round": "Turas {round}",
+      "penalty": "po baudinių"
     },
     "playoff": {
       "quarterfinals": "Ketvirtfinaliai",
       "semifinals": "Pusfinaliai",
       "final": "Finalas",
       "tbd": "Bus nustatyta",
-      "round": "Etapas {round}"
+      "round": "Etapas {round}",
+      "penalty": "po baudinių"
     },
     "today": "Šiandien",
     "upcoming": "Artimiausi",
@@ -266,7 +268,10 @@
     "editTime": "Keisti laiką",
     "clearSchedule": "Išvalyti tvarkaraštį",
     "scheduledAt": "Laikas",
-    "clearingSchedule": "Valoma..."
+    "clearingSchedule": "Valoma...",
+    "penaltyLabel": "Papildomas rezultatas",
+    "penaltyLabelPlaceholder": "pvz. 11m baudiniai",
+    "penaltyDefault": "po baudinių"
   },
   "Teams": {
     "title": "Komandos",
@@ -317,7 +322,7 @@
     "singleElimination": {
       "name": "Vienguba eliminacija (Single Elimination)",
       "desc": "Pralaimi — iškrenti! Greičiausias turnyro formatas — kiekvienos rungtynės eliminuoja vieną komandą iki finalo.",
-      "howItWorks": "1. Komandos suskirstomos į schemą (laisvi bilietai, jei ne 2 laipsnio skaičius)\n2. Nugalėtojai eina toliau, pralaimėjusieji iškrenta\n3. Kiekvienas etapas perpus sumažina dalyvių skaičių iki finalo",
+      "howItWorks": "1. Komandos surašomos į atkrintamųjų schemą poromis\n2. Nugalėtojai eina toliau, pralaimėjusieji iškrenta\n3. Kiekvienas etapas perpus sumažina dalyvių skaičių iki finalo",
       "bestFor": "4-64 komandų. Greitas formatas, kai laikas ribotas.",
       "example": "8 komandos → Ketvirtfinaliai (4) → Pusfinaliai (2) → Finalas (1) = 7 rungtynės"
     },

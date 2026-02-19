@@ -16,8 +16,13 @@ function BracketMatch({ match, teamNames, onTeamClick }: { match: Match; teamNam
   const homeName = match.homeTeamId ? (teamNames[match.homeTeamId] ?? t("tbd")) : t("tbd");
   const awayName = match.awayTeamId ? (teamNames[match.awayTeamId] ?? t("tbd")) : t("tbd");
   const isCompleted = match.status === "completed";
-  const homeWins = isCompleted && match.homeScore !== null && match.awayScore !== null && match.homeScore > match.awayScore;
-  const awayWins = isCompleted && match.homeScore !== null && match.awayScore !== null && match.awayScore > match.homeScore;
+  const hasPenalty = match.penaltyHome != null && match.penaltyAway != null;
+  const homeWins = isCompleted && match.homeScore !== null && match.awayScore !== null && (
+    match.homeScore > match.awayScore || (match.homeScore === match.awayScore && hasPenalty && match.penaltyHome! > match.penaltyAway!)
+  );
+  const awayWins = isCompleted && match.homeScore !== null && match.awayScore !== null && (
+    match.awayScore > match.homeScore || (match.homeScore === match.awayScore && hasPenalty && match.penaltyAway! > match.penaltyHome!)
+  );
 
   return (
     <div className="rounded-lg border bg-card w-44 sm:w-56 overflow-hidden shadow-sm transition-shadow hover:shadow-md">
@@ -67,6 +72,11 @@ function BracketMatch({ match, teamNames, onTeamClick }: { match: Match; teamNam
           </span>
         )}
       </div>
+      {isCompleted && hasPenalty && (
+        <div className="px-2.5 sm:px-3 py-0.5 text-[10px] text-muted-foreground border-t text-center">
+          *({match.penaltyLabel || t("penalty")}: {match.penaltyHome}-{match.penaltyAway})
+        </div>
+      )}
       {match.scheduledAt && (
         <div className="px-2.5 sm:px-3 py-1 text-[10px] sm:text-xs text-muted-foreground border-t bg-muted/30 text-center">
           {format.dateTime(new Date(match.scheduledAt), {

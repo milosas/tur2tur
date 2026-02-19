@@ -28,6 +28,9 @@ export type Match = {
   status: MatchStatus;
   stage: MatchStage;
   scheduledAt?: string;
+  penaltyHome?: number | null;
+  penaltyAway?: number | null;
+  penaltyLabel?: string | null;
 };
 
 export type PlayoffRound = {
@@ -112,6 +115,9 @@ export type DBMatch = {
   stage: string;
   scheduled_at: string | null;
   completed_at: string | null;
+  penalty_home: number | null;
+  penalty_away: number | null;
+  penalty_label: string | null;
 };
 
 export type SubscriptionTier = 'free' | 'single' | 'unlimited';
@@ -147,6 +153,9 @@ export function dbMatchToMatch(m: DBMatch): Match {
     status: m.status as MatchStatus,
     stage: m.stage as MatchStage,
     scheduledAt: m.scheduled_at ?? undefined,
+    penaltyHome: m.penalty_home ?? null,
+    penaltyAway: m.penalty_away ?? null,
+    penaltyLabel: m.penalty_label ?? null,
   };
 }
 

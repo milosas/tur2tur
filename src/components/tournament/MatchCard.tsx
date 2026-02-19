@@ -43,8 +43,13 @@ export function MatchCard({ match, teamNames, onTeamClick }: MatchCardProps) {
   const homeName = match.homeTeamId ? (teamNames[match.homeTeamId] ?? tPlayoff("tbd")) : tPlayoff("tbd");
   const awayName = match.awayTeamId ? (teamNames[match.awayTeamId] ?? tPlayoff("tbd")) : tPlayoff("tbd");
   const isCompleted = match.status === "completed";
-  const homeWins = isCompleted && match.homeScore !== null && match.awayScore !== null && match.homeScore > match.awayScore;
-  const awayWins = isCompleted && match.homeScore !== null && match.awayScore !== null && match.awayScore > match.homeScore;
+  const hasPenalty = match.penaltyHome != null && match.penaltyAway != null;
+  const homeWins = isCompleted && match.homeScore !== null && match.awayScore !== null && (
+    match.homeScore > match.awayScore || (match.homeScore === match.awayScore && hasPenalty && match.penaltyHome! > match.penaltyAway!)
+  );
+  const awayWins = isCompleted && match.homeScore !== null && match.awayScore !== null && (
+    match.awayScore > match.homeScore || (match.homeScore === match.awayScore && hasPenalty && match.penaltyAway! > match.penaltyHome!)
+  );
 
   return (
     <div className="rounded-lg border transition-colors hover:bg-muted/30 overflow-hidden">
@@ -63,7 +68,8 @@ export function MatchCard({ match, teamNames, onTeamClick }: MatchCardProps) {
             </span>
           ) : null}
         </div>
-        <div className="flex items-center justify-center gap-2 px-3 py-1 bg-muted/30">
+        <div className="flex flex-col items-center gap-0.5 px-3 py-1 bg-muted/30">
+          <div className="flex items-center gap-2">
           {isCompleted ? (
             <span className="font-mono text-xs text-muted-foreground">vs</span>
           ) : (
@@ -77,6 +83,12 @@ export function MatchCard({ match, teamNames, onTeamClick }: MatchCardProps) {
                 hour: "2-digit",
                 minute: "2-digit",
               })}
+            </span>
+          )}
+          </div>
+          {isCompleted && hasPenalty && (
+            <span className="text-[10px] text-muted-foreground">
+              *({match.penaltyLabel || t("penalty")}: {match.penaltyHome}-{match.penaltyAway})
             </span>
           )}
         </div>
@@ -103,9 +115,16 @@ export function MatchCard({ match, teamNames, onTeamClick }: MatchCardProps) {
         </div>
         <div className="flex flex-col items-center gap-1 min-w-[80px]">
           {isCompleted ? (
-            <span className="font-mono font-bold text-lg">
-              {match.homeScore} - {match.awayScore}
-            </span>
+            <>
+              <span className="font-mono font-bold text-lg">
+                {match.homeScore} - {match.awayScore}
+              </span>
+              {hasPenalty && (
+                <span className="text-[10px] text-muted-foreground">
+                  *({match.penaltyLabel || t("penalty")}: {match.penaltyHome}-{match.penaltyAway})
+                </span>
+              )}
+            </>
           ) : (
             <Badge variant="outline" className="text-xs">{t(match.status)}</Badge>
           )}

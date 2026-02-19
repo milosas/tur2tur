@@ -4,7 +4,8 @@ import { useTranslations, useLocale } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Badge } from "@/components/ui/badge";
 import { User, MapPin, Calendar, Users } from "lucide-react";
-import { useState } from "react";
+import { useState, useMemo } from "react";
+import { Button } from "@/components/ui/button";
 
 const localeMap: Record<string, string> = {
   lt: "lt-LT",
@@ -381,6 +382,18 @@ export function TournamentsList({
 }) {
   const t = useTranslations("Tournaments");
   const [activeFilter, setActiveFilter] = useState<"all" | TournamentCategory>("all");
+  const [visibleCount, setVisibleCount] = useState(10);
+
+  const { ongoing, upcoming, past } = useMemo(
+    () => categorizeTournaments(tournaments),
+    [tournaments]
+  );
+
+  // Reset visible count when filter changes
+  const handleFilterChange = (key: "all" | TournamentCategory) => {
+    setActiveFilter(key);
+    setVisibleCount(10);
+  };
 
   if (tournaments.length === 0) {
     return (
@@ -389,8 +402,6 @@ export function TournamentsList({
       </div>
     );
   }
-
-  const { ongoing, upcoming, past } = categorizeTournaments(tournaments);
 
   const filters: Array<{ key: "all" | TournamentCategory; label: string; count: number }> = [
     { key: "all", label: t("allTournaments"), count: tournaments.length },
@@ -408,6 +419,9 @@ export function TournamentsList({
       ? upcoming
       : past;
 
+  const visibleTournaments = filteredTournaments.slice(0, visibleCount);
+  const hasMore = filteredTournaments.length > visibleCount;
+
   const getCategoryForTournament = (tournament: TournamentListItem): TournamentCategory => {
     if (ongoing.includes(tournament)) return "ongoing";
     if (upcoming.includes(tournament)) return "upcoming";
@@ -422,7 +436,7 @@ export function TournamentsList({
           {filters.map((filter) => (
             <button
               key={filter.key}
-              onClick={() => setActiveFilter(filter.key)}
+              onClick={() => handleFilterChange(filter.key)}
               className={`pill-filter ${
                 activeFilter === filter.key ? "pill-filter-active" : ""
               }`}
@@ -435,9 +449,9 @@ export function TournamentsList({
       </div>
 
       {/* Tournament List */}
-      {filteredTournaments.length > 0 ? (
+      {visibleTournaments.length > 0 ? (
         <div className="card-livescore overflow-hidden">
-          {filteredTournaments.map((tournament) => (
+          {visibleTournaments.map((tournament) => (
             <TournamentListRow
               key={tournament.id}
               tournament={tournament}
@@ -448,6 +462,19 @@ export function TournamentsList({
       ) : (
         <div className="card-livescore p-8 text-center">
           <p className="text-muted-foreground text-sm">{t("noTournaments")}</p>
+        </div>
+      )}
+
+      {/* Show More Button */}
+      {hasMore && (
+        <div className="text-center mt-6">
+          <Button
+            variant="outline"
+            onClick={() => setVisibleCount((prev) => prev + 10)}
+            className="rounded-full px-8"
+          >
+            {t("viewMore")} ({filteredTournaments.length - visibleCount})
+          </Button>
         </div>
       )}
     </div>

@@ -93,14 +93,16 @@
       "scheduled": "Planeeritud",
       "completed": "Lõppenud",
       "in_progress": "Käimas",
-      "round": "Voor {round}"
+      "round": "Voor {round}",
+      "penalty": "lisaaeg"
     },
     "playoff": {
       "quarterfinals": "Veerandfinaalid",
       "semifinals": "Poolfinaalid",
       "final": "Finaal",
       "tbd": "Selgub hiljem",
-      "round": "Voor {round}"
+      "round": "Voor {round}",
+      "penalty": "lisaaeg"
     },
     "today": "Täna",
     "upcoming": "Tulemas",
@@ -266,7 +268,10 @@
     "editTime": "Muuda aega",
     "clearSchedule": "Tühjenda ajakava",
     "scheduledAt": "Aeg",
-    "clearingSchedule": "Tühjendamine..."
+    "clearingSchedule": "Tühjendamine...",
+    "penaltyLabel": "Lisatulemus",
+    "penaltyLabelPlaceholder": "nt. Penaltid",
+    "penaltyDefault": "lisaaeg"
   },
   "Teams": {
     "title": "Meeskonnad",
@@ -317,7 +322,7 @@
     "singleElimination": {
       "name": "Ühekordne väljalangemine (Single Elimination)",
       "desc": "Kaotad — langeb välja! Kiireim turniirivormaat — iga mäng elimineerib ühe meeskonna kuni finaalni.",
-      "howItWorks": "1. Meeskonnad paigutatakse skeemi (vabad kohad, kui pole 2 aste)\n2. Võitjad lähevad edasi, kaotajad elimineeritakse\n3. Iga voor vähendab osalejaid poole võrra finaalni",
+      "howItWorks": "1. Meeskonnad paigutatakse paaridesse väljalangemisskeemis\n2. Võitjad lähevad edasi, kaotajad elimineeritakse\n3. Iga voor vähendab osalejaid poole võrra finaalni",
       "bestFor": "4-64 meeskonda. Kiire formaat, kui aeg on piiratud.",
       "example": "8 meeskonda → Veerandfinaalid (4) → Poolfinaalid (2) → Finaal (1) = 7 mängu"
     },

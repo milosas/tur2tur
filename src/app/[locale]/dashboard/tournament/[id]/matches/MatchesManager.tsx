@@ -86,6 +86,8 @@ export function MatchesManager({
 
   // Score editing state: matchId -> { home, away }
   const [scores, setScores] = useState<Record<string, { home: string; away: string }>>({});
+  // Tiebreaker state: matchId -> { home, away, label }
+  const [penalties, setPenalties] = useState<Record<string, { home: string; away: string; label: string }>>({});
 
   const teamNames: TeamNameMap = {};
   for (const team of teams) {
@@ -349,27 +351,107 @@ export function MatchesManager({
     const awayScore = parseInt(s.away);
     if (isNaN(homeScore) || isNaN(awayScore) || homeScore < 0 || awayScore < 0) return;
 
+    const match = matches.find((m) => m.id === matchId);
+    const isKnockout = match && (match.stage === "playoff" || match.stage === "elimination");
+    const isTied = homeScore === awayScore;
+    const pen = penalties[matchId];
+
+    // If tied in knockout and no valid tiebreaker yet — don't save
+    if (isKnockout && isTied) {
+      if (!pen || pen.home === "" || pen.away === "") return;
+      const penHome = parseInt(pen.home);
+      const penAway = parseInt(pen.away);
+      if (isNaN(penHome) || isNaN(penAway) || penHome < 0 || penAway < 0 || penHome === penAway) return;
+    }
+
     setSavingMatch(matchId);
     try {
+      const updateData: Record<string, unknown> = {
+        home_score: homeScore,
+        away_score: awayScore,
+        status: "completed",
+        completed_at: new Date().toISOString(),
+      };
+
+      // Save tiebreaker if tied in knockout
+      if (isKnockout && isTied && pen) {
+        updateData.penalty_home = parseInt(pen.home);
+        updateData.penalty_away = parseInt(pen.away);
+        updateData.penalty_label = pen.label || null;
+      } else {
+        // Clear any existing tiebreaker if score is no longer tied
+        updateData.penalty_home = null;
+        updateData.penalty_away = null;
+        updateData.penalty_label = null;
+      }
+
       await supabase
         .from("matches")
-        .update({
-          home_score: homeScore,
-          away_score: awayScore,
-          status: "completed",
-          completed_at: new Date().toISOString(),
-        })
+        .update(updateData)
         .eq("id", matchId);
 
-      setMatches((prev) =>
-        prev.map((m) =>
-          m.id === matchId
-            ? { ...m, home_score: homeScore, away_score: awayScore, status: "completed" }
-            : m
-        )
+      let updatedMatches = matches.map((m) =>
+        m.id === matchId
+          ? {
+              ...m,
+              home_score: homeScore,
+              away_score: awayScore,
+              status: "completed",
+              penalty_home: (updateData.penalty_home as number | null) ?? null,
+              penalty_away: (updateData.penalty_away as number | null) ?? null,
+              penalty_label: (updateData.penalty_label as string | null) ?? null,
+            }
+          : m
       );
-      // Clear the score inputs for this match
+
+      // Determine winner for auto-advance
+      let winnerId: string | null = null;
+      if (match && isKnockout) {
+        if (!isTied) {
+          winnerId = homeScore > awayScore ? match.home_team_id : match.away_team_id;
+        } else if (pen) {
+          const penHome = parseInt(pen.home);
+          const penAway = parseInt(pen.away);
+          winnerId = penHome > penAway ? match.home_team_id : match.away_team_id;
+        }
+      }
+
+      // Auto-advance winner in playoff/elimination stages
+      if (match && winnerId && isKnockout) {
+        const stageMatches = updatedMatches
+          .filter((m) => m.stage === match.stage)
+          .sort((a, b) => a.round - b.round || a.match_number - b.match_number);
+
+        const roundMatches = stageMatches.filter((m) => m.round === match.round);
+        const nextRoundMatches = stageMatches.filter((m) => m.round === match.round + 1);
+
+        if (nextRoundMatches.length > 0) {
+          const posInRound = roundMatches.findIndex((m) => m.id === matchId);
+          const targetMatchIdx = Math.floor(posInRound / 2);
+          const side = posInRound % 2 === 0 ? "home_team_id" : "away_team_id";
+
+          if (targetMatchIdx < nextRoundMatches.length) {
+            const targetMatch = nextRoundMatches[targetMatchIdx];
+
+            await supabase
+              .from("matches")
+              .update({ [side]: winnerId })
+              .eq("id", targetMatch.id);
+
+            updatedMatches = updatedMatches.map((m) =>
+              m.id === targetMatch.id ? { ...m, [side]: winnerId } : m
+            );
+          }
+        }
+      }
+
+      setMatches(updatedMatches);
       setScores((prev) => {
+        const next = { ...prev };
+        delete next[matchId];
+        return next;
+      });
+      setPenalties((prev) => {
         const next = { ...prev };
         delete next[matchId];
         return next;
@@ -610,6 +692,24 @@ export function MatchesManager({
     const canEdit = match.home_team_id && match.away_team_id;
     const homeSwapKey = `${match.id}-home`;
     const awaySwapKey = `${match.id}-away`;
+    const isKnockout = match.stage === "playoff" || match.stage === "elimination";
+    const hasPenalty = match.penalty_home !== null && match.penalty_away !== null;
+    const isTiedInput = (() => {
+      const s = scores[match.id];
+      if (s) return s.home !== "" && s.away !== "" && parseInt(s.home) === parseInt(s.away);
+      return match.home_score !== null && match.away_score !== null && match.home_score === match.away_score;
+    })();
+    const showPenaltyInputs = isKnockout && canEdit && isTiedInput;
+
+    // Determine winner for highlighting
+    let winnerId: string | null = null;
+    if (isCompleted && match.home_score !== null && match.away_score !== null) {
+      if (match.home_score > match.away_score) winnerId = match.home_team_id;
+      else if (match.away_score > match.home_score) winnerId = match.away_team_id;
+      else if (hasPenalty) {
+        winnerId = match.penalty_home! > match.penalty_away! ? match.home_team_id : match.away_team_id;
+      }
+    }
 
     const scheduledTime = match.scheduled_at
       ? new Date(match.scheduled_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: false })
@@ -618,134 +718,192 @@ export function MatchesManager({
       ? new Date(match.scheduled_at).toISOString().slice(0, 16)
       : "";
 
+    const homeIsWinner = winnerId && winnerId === match.home_team_id;
+    const awayIsWinner = winnerId && winnerId === match.away_team_id;
+
     return (
-      <div key={match.id} className="flex items-center gap-2 rounded-lg border p-3">
-        {/* Scheduled time display / editor */}
-        <div className="w-20 shrink-0">
-          {editingTimeMatch === match.id ? (
+      <div key={match.id} className="rounded-lg border p-3 space-y-2">
+        <div className="flex items-center gap-2">
+          {/* Scheduled time display / editor */}
+          <div className="w-20 shrink-0">
+            {editingTimeMatch === match.id ? (
+              <Input
+                type="datetime-local"
+                className="h-7 text-xs px-1"
+                defaultValue={scheduledDatetimeLocal}
+                autoFocus
+                onBlur={(e) => handleUpdateMatchTime(match.id, e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") handleUpdateMatchTime(match.id, (e.target as HTMLInputElement).value);
+                  if (e.key === "Escape") setEditingTimeMatch(null);
+                }}
+              />
+            ) : scheduledTime ? (
+              <button
+                onClick={() => setEditingTimeMatch(match.id)}
+                className="flex items-center gap-1 hover:text-foreground transition-colors cursor-pointer"
+                title={t("editTime")}
+              >
+                <Clock className="h-4 w-4" />
+                <span className="text-sm font-bold text-foreground">{scheduledTime}</span>
+              </button>
+            ) : null}
+          </div>
+          {/* Home team — clickable to swap */}
+          <div className="flex-1 flex items-center justify-end gap-2 text-sm font-medium">
+            {swappingTeam === homeSwapKey ? (
+              <Select
+                value={match.home_team_id ?? "__none__"}
+                onValueChange={(val) => handleSwapTeam(match.id, "home", val)}
+              >
+                <SelectTrigger className="h-7 w-auto min-w-[120px] text-xs">
+                  <SelectValue placeholder={tTeams("selectTeam")} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="__none__">TBD</SelectItem>
+                  {teams.map((team) => (
+                    <SelectItem key={team.id} value={team.id}>
+                      {team.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            ) : (
+              <button
+                onClick={() => setSwappingTeam(homeSwapKey)}
+                className={`hover:underline cursor-pointer text-right ${homeIsWinner ? "font-bold text-green-600 dark:text-green-400" : ""}`}
+                title={tTeams("swapTeam")}
+              >
+                {homeName}
+              </button>
+            )}
+            {match.home_team_id && <TeamColorDot teamId={match.home_team_id} teamNames={teamNames} />}
+          </div>
+          {/* Score inputs */}
+          <div className="flex items-center gap-1 justify-center">
+            {canEdit ? (
+              <>
+                <Input
+                  type="number"
+                  min={0}
+                  className="w-14 text-center h-8"
+                  value={getScoreValue(match.id, "home")}
+                  onChange={(e) => setScoreValue(match.id, "home", e.target.value)}
+                />
+                <span className="text-muted-foreground text-sm">-</span>
+                <Input
+                  type="number"
+                  min={0}
+                  className="w-14 text-center h-8"
+                  value={getScoreValue(match.id, "away")}
+                  onChange={(e) => setScoreValue(match.id, "away", e.target.value)}
+                />
+              </>
+            ) : (
+              <Badge variant="outline">TBD</Badge>
+            )}
+          </div>
+          {/* Away team — clickable to swap */}
+          <div className="flex-1 flex items-center gap-2 text-sm font-medium">
+            {match.away_team_id && <TeamColorDot teamId={match.away_team_id} teamNames={teamNames} />}
+            {swappingTeam === awaySwapKey ? (
+              <Select
+                value={match.away_team_id ?? "__none__"}
+                onValueChange={(val) => handleSwapTeam(match.id, "away", val)}
+              >
+                <SelectTrigger className="h-7 w-auto min-w-[120px] text-xs">
+                  <SelectValue placeholder={tTeams("selectTeam")} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="__none__">TBD</SelectItem>
+                  {teams.map((team) => (
+                    <SelectItem key={team.id} value={team.id}>
+                      {team.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            ) : (
+              <button
+                onClick={() => setSwappingTeam(awaySwapKey)}
+                className={`hover:underline cursor-pointer ${awayIsWinner ? "font-bold text-green-600 dark:text-green-400" : ""}`}
+                title={tTeams("swapTeam")}
+              >
+                {awayName}
+              </button>
+            )}
+          </div>
+          {/* Save + status — after away team */}
+          <div className="flex items-center gap-1 shrink-0">
+            {canEdit && (
+              <Button
+                size="sm"
+                variant="outline"
+                className="h-8 px-2"
+                disabled={savingMatch === match.id}
+                onClick={() => handleSaveScore(match.id)}
+              >
+                {savingMatch === match.id ? "..." : t("saveScore")}
+              </Button>
+            )}
+            {isCompleted && (
+              <CheckCircle className="h-4 w-4 text-green-500 shrink-0" />
+            )}
+          </div>
+        </div>
+
+        {/* Penalty/tiebreaker input row — shown when tied in knockout */}
+        {showPenaltyInputs && !isCompleted && (
+          <div className="flex items-center gap-2 pl-20 text-sm">
+            <span className="text-muted-foreground">{t("penaltyLabel")}:</span>
             <Input
-              type="datetime-local"
-              className="h-7 text-xs px-1"
-              defaultValue={scheduledDatetimeLocal}
-              autoFocus
-              onBlur={(e) => handleUpdateMatchTime(match.id, e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") handleUpdateMatchTime(match.id, (e.target as HTMLInputElement).value);
-                if (e.key === "Escape") setEditingTimeMatch(null);
-              }}
+              type="text"
+              placeholder={t("penaltyLabelPlaceholder")}
+              className="h-7 w-40 text-xs"
+              value={penalties[match.id]?.label ?? ""}
+              onChange={(e) =>
+                setPenalties((prev) => ({
+                  ...prev,
+                  [match.id]: { ...prev[match.id], home: prev[match.id]?.home ?? "", away: prev[match.id]?.away ?? "", label: e.target.value },
+                }))
+              }
             />
-          ) : scheduledTime ? (
-            <button
-              onClick={() => setEditingTimeMatch(match.id)}
-              className="flex items-center gap-1 hover:text-foreground transition-colors cursor-pointer"
-              title={t("editTime")}
-            >
-              <Clock className="h-4 w-4" />
-              <span className="text-sm font-bold text-foreground">{scheduledTime}</span>
-            </button>
-          ) : null}
-        </div>
-        {/* Home team — clickable to swap */}
-        <div className="flex-1 flex items-center justify-end gap-2 text-sm font-medium">
-          {swappingTeam === homeSwapKey ? (
-            <Select
-              value={match.home_team_id ?? "__none__"}
-              onValueChange={(val) => handleSwapTeam(match.id, "home", val)}
-            >
-              <SelectTrigger className="h-7 w-auto min-w-[120px] text-xs">
-                <SelectValue placeholder={tTeams("selectTeam")} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="__none__">TBD</SelectItem>
-                {teams.map((team) => (
-                  <SelectItem key={team.id} value={team.id}>
-                    {team.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          ) : (
-            <button
-              onClick={() => setSwappingTeam(homeSwapKey)}
-              className="hover:underline cursor-pointer text-right"
-              title={tTeams("swapTeam")}
-            >
-              {homeName}
-            </button>
-          )}
-          {match.home_team_id && <TeamColorDot teamId={match.home_team_id} teamNames={teamNames} />}
-        </div>
-        {/* Score inputs */}
-        <div className="flex items-center gap-1 justify-center">
-          {canEdit ? (
-            <>
-              <Input
-                type="number"
-                min={0}
-                className="w-14 text-center h-8"
-                value={getScoreValue(match.id, "home")}
-                onChange={(e) => setScoreValue(match.id, "home", e.target.value)}
-              />
-              <span className="text-muted-foreground text-sm">-</span>
-              <Input
-                type="number"
-                min={0}
-                className="w-14 text-center h-8"
-                value={getScoreValue(match.id, "away")}
-                onChange={(e) => setScoreValue(match.id, "away", e.target.value)}
-              />
-            </>
-          ) : (
-            <Badge variant="outline">TBD</Badge>
-          )}
-        </div>
-        {/* Away team — clickable to swap */}
-        <div className="flex-1 flex items-center gap-2 text-sm font-medium">
-          {match.away_team_id && <TeamColorDot teamId={match.away_team_id} teamNames={teamNames} />}
-          {swappingTeam === awaySwapKey ? (
-            <Select
-              value={match.away_team_id ?? "__none__"}
-              onValueChange={(val) => handleSwapTeam(match.id, "away", val)}
-            >
-              <SelectTrigger className="h-7 w-auto min-w-[120px] text-xs">
-                <SelectValue placeholder={tTeams("selectTeam")} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="__none__">TBD</SelectItem>
-                {teams.map((team) => (
-                  <SelectItem key={team.id} value={team.id}>
-                    {team.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          ) : (
-            <button
-              onClick={() => setSwappingTeam(awaySwapKey)}
-              className="hover:underline cursor-pointer"
-              title={tTeams("swapTeam")}
-            >
-              {awayName}
-            </button>
-          )}
-        </div>
-        {/* Save + status — after away team */}
-        <div className="flex items-center gap-1 shrink-0">
-          {canEdit && (
-            <Button
-              size="sm"
-              variant="outline"
-              className="h-8 px-2"
-              disabled={savingMatch === match.id}
-              onClick={() => handleSaveScore(match.id)}
-            >
-              {savingMatch === match.id ? "..." : t("saveScore")}
-            </Button>
-          )}
-          {isCompleted && (
-            <CheckCircle className="h-4 w-4 text-green-500 shrink-0" />
-          )}
-        </div>
+            <Input
+              type="number"
+              min={0}
+              className="w-14 text-center h-7"
+              placeholder="0"
+              value={penalties[match.id]?.home ?? ""}
+              onChange={(e) =>
+                setPenalties((prev) => ({
+                  ...prev,
+                  [match.id]: { ...prev[match.id], home: e.target.value, away: prev[match.id]?.away ?? "", label: prev[match.id]?.label ?? "" },
+                }))
+              }
+            />
+            <span className="text-muted-foreground">-</span>
+            <Input
+              type="number"
+              min={0}
+              className="w-14 text-center h-7"
+              placeholder="0"
+              value={penalties[match.id]?.away ?? ""}
+              onChange={(e) =>
+                setPenalties((prev) => ({
+                  ...prev,
+                  [match.id]: { ...prev[match.id], home: prev[match.id]?.home ?? "", away: e.target.value, label: prev[match.id]?.label ?? "" },
+                }))
+              }
+            />
+          </div>
+        )}
+
+        {/* Penalty display for completed matches */}
+        {isCompleted && hasPenalty && (
+          <div className="pl-20 text-xs text-muted-foreground">
+            *({match.penalty_label || t("penaltyDefault")}: {match.penalty_home}-{match.penalty_away})
+          </div>
+        )}
       </div>
     );
   }
