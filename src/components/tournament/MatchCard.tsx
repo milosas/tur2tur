@@ -53,58 +53,47 @@ export function MatchCard({ match, teamNames, onTeamClick }: MatchCardProps) {
 
   return (
     <div className="rounded-lg border transition-colors hover:bg-muted/30 overflow-hidden">
-      {/* Mobile: compact vertical layout */}
-      <div className="sm:hidden">
-        <div className="flex items-center justify-between px-3 py-2 gap-2">
-          <div className="flex items-center gap-1.5 min-w-0 flex-1">
-            {match.homeTeamId && <TeamColorDot teamId={match.homeTeamId} teamNames={teamNames} />}
-            <span className="text-sm">
+      {/* Mobile: single row layout */}
+      <div className="sm:hidden px-3 py-2.5">
+        <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1 min-w-0 flex-1 justify-end">
+            <span className="text-xs truncate text-right">
               <TeamName teamId={match.homeTeamId} name={homeName} isWinner={homeWins} onTeamClick={onTeamClick} />
             </span>
+            {match.homeTeamId && <TeamColorDot teamId={match.homeTeamId} teamNames={teamNames} />}
           </div>
-          {isCompleted ? (
-            <span className={`font-mono font-bold text-sm shrink-0 ${homeWins ? "text-foreground" : "text-muted-foreground"}`}>
-              {match.homeScore}
-            </span>
-          ) : null}
-        </div>
-        <div className="flex flex-col items-center gap-0.5 px-3 py-1 bg-muted/30">
-          <div className="flex items-center gap-2">
-          {isCompleted ? (
-            <span className="font-mono text-xs text-muted-foreground">vs</span>
-          ) : (
-            <Badge variant="outline" className="text-[10px] h-5">{t(match.status)}</Badge>
-          )}
-          {match.scheduledAt && (
-            <span className="text-[10px] text-muted-foreground">
-              {format.dateTime(new Date(match.scheduledAt), {
-                month: "short",
-                day: "numeric",
-                hour: "2-digit",
-                minute: "2-digit",
-              })}
-            </span>
-          )}
+          <div className="shrink-0 min-w-[52px] text-center">
+            {isCompleted ? (
+              <span className="font-mono font-bold text-sm">
+                {match.homeScore} - {match.awayScore}
+              </span>
+            ) : match.scheduledAt ? (
+              <span className="text-[10px] text-muted-foreground leading-tight block">
+                {format.dateTime(new Date(match.scheduledAt), {
+                  month: "short",
+                  day: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
+              </span>
+            ) : (
+              <span className="text-[10px] text-muted-foreground">vs</span>
+            )}
           </div>
-          {isCompleted && hasPenalty && (
-            <span className="text-[10px] text-muted-foreground">
-              *({match.penaltyLabel || t("penalty")}: {match.penaltyHome}-{match.penaltyAway})
-            </span>
-          )}
-        </div>
-        <div className="flex items-center justify-between px-3 py-2 gap-2">
-          <div className="flex items-center gap-1.5 min-w-0 flex-1">
+          <div className="flex items-center gap-1 min-w-0 flex-1">
             {match.awayTeamId && <TeamColorDot teamId={match.awayTeamId} teamNames={teamNames} />}
-            <span className="text-sm">
+            <span className="text-xs truncate">
               <TeamName teamId={match.awayTeamId} name={awayName} isWinner={awayWins} onTeamClick={onTeamClick} />
             </span>
           </div>
-          {isCompleted ? (
-            <span className={`font-mono font-bold text-sm shrink-0 ${awayWins ? "text-foreground" : "text-muted-foreground"}`}>
-              {match.awayScore}
-            </span>
-          ) : null}
         </div>
+        {isCompleted && hasPenalty && (
+          <div className="text-center mt-1">
+            <span className="text-[10px] text-muted-foreground">
+              *({match.penaltyLabel || t("penalty")}: {match.penaltyHome}-{match.penaltyAway})
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Desktop: horizontal layout */}
