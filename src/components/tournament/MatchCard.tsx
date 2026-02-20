@@ -77,7 +77,7 @@ export function MatchCard({ match, teamNames, onTeamClick }: MatchCardProps) {
                 })}
               </span>
             ) : (
-              <span className="text-[10px] text-muted-foreground">vs</span>
+              <span className="text-[10px] text-muted-foreground">—</span>
             )}
           </div>
           <div className="flex items-center gap-1 min-w-0 flex-1">
