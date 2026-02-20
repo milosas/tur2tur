@@ -2,16 +2,17 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
+import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function RegisterPage() {
   const t = useTranslations("Auth");
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const supabase = createClient();
@@ -24,37 +25,19 @@ export default function RegisterPage() {
     const { error } = await supabase.auth.signUp({
       email,
       password,
+      options: {
+        emailRedirectTo: `${window.location.origin}/lt/auth/callback`,
+      },
     });
 
     if (error) {
       setError(error.message);
     } else {
-      setSuccess(true);
+      // Auto-login after registration (no email confirmation required)
+      router.push("/dashboard");
+      router.refresh();
     }
     setLoading(false);
-  }
-
-  if (success) {
-    return (
-      <div className="relative flex min-h-screen items-center justify-center p-4">
-        <div
-          className="absolute inset-0 -z-10 hero-bg-image"
-          style={{
-            backgroundImage: 'url(https://images.unsplash.com/photo-1459865264687-595d652de67e?w=1920&q=80)'
-          }}
-        >
-          <div className="absolute inset-0 hero-overlay" />
-        </div>
-        <Card className="w-full max-w-md relative">
-          <CardContent className="pt-6 text-center">
-            <p className="text-lg font-medium">{t("checkEmail")}</p>
-            <p className="text-muted-foreground mt-2">
-              {t("confirmationSent")}
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-    );
   }
 
   return (

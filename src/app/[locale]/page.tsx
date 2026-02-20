@@ -176,7 +176,7 @@ export default async function HomePage() {
             <p className="text-white/90 text-xl sm:text-2xl md:text-3xl mb-12 sm:mb-16 max-w-3xl mx-auto leading-relaxed font-medium drop-shadow-lg">
               {t("finalCtaSubtitle")}
             </p>
-            <Button asChild size="lg" className="text-xl sm:text-2xl px-14 h-18 sm:h-20 bg-primary hover:bg-primary/90 shadow-2xl shadow-primary/40 hover:shadow-primary/60 transition-all duration-300 hover:scale-105 active:scale-95 rounded-2xl font-bold">
+            <Button asChild size="lg" className="text-xl sm:text-2xl px-14 h-18 sm:h-20 bg-primary hover:bg-primary/90 shadow-2xl shadow-primary/40 hover:shadow-primary/60 transition-all duration-300 hover:scale-105 active:scale-95 w-full sm:w-auto rounded-2xl font-bold">
               <Link href="/dashboard">{t("finalCta")}</Link>
             </Button>
           </div>
