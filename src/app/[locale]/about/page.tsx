@@ -2,6 +2,12 @@ import { useTranslations } from "next-intl";
 import { Card, CardContent } from "@/components/ui/card";
 import { Trophy, Users, Globe, Mail } from "lucide-react";
 import { PageBanner } from "@/components/PageBanner";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Apie mus",
+  description: "Sužinokite apie tur2tur - turnyrų valdymo platformą Baltijos šalims. Kurkite, valdykite ir sekite sporto turnyrus lengvai.",
+};
 
 export default function AboutPage() {
   const t = useTranslations("About");

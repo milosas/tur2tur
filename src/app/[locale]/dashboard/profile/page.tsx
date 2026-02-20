@@ -2,6 +2,12 @@ import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import { ProfileForm } from "@/components/dashboard/ProfileForm";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Profilis",
+  description: "Redaguokite savo profilį, keiskite nustatymus ir valdykite paskyrą.",
+};
 
 export default async function ProfilePage() {
   const supabase = await createClient();

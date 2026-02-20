@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import Image from "next/image";
 import {
   categorizeTournaments,
   type TournamentListItem,
@@ -59,9 +60,11 @@ function TournamentColumnClean({
                 className="flex items-center gap-3 p-3 hover:bg-muted/30 transition-colors"
               >
                 {tournament.logo_url ? (
-                  <img
+                  <Image
                     src={tournament.logo_url}
                     alt=""
+                    width={40}
+                    height={40}
                     className="h-10 w-10 rounded-lg object-cover shrink-0"
                   />
                 ) : tournament.accent_colors?.[0] ? (

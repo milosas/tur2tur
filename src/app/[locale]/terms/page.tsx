@@ -1,4 +1,10 @@
 import { useTranslations } from "next-intl";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Naudojimo sąlygos",
+  description: "tur2tur naudojimo sąlygos. Susipažinkite su platformos naudojimo taisyklėmis ir sąlygomis.",
+};
 
 export default function TermsPage() {
   const t = useTranslations("Terms");

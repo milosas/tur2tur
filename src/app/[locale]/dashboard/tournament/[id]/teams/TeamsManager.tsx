@@ -18,6 +18,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import Image from "next/image";
 import { Plus, Pencil, Trash2, Users, ArrowLeft, Play } from "lucide-react";
 import {
   generateGroupPlayoff,
@@ -351,9 +352,11 @@ export function TeamsManager({
               <CardHeader className="pb-3">
                 <div className="flex items-center gap-3">
                   {team.logo_url ? (
-                    <img
+                    <Image
                       src={team.logo_url}
                       alt={team.name}
+                      width={40}
+                      height={40}
                       className="h-10 w-10 rounded-full object-cover shrink-0"
                     />
                   ) : (

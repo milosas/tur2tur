@@ -2,6 +2,12 @@ import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import { TournamentsList } from "./TournamentsList";
 import { PageBanner } from "@/components/PageBanner";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Turnyrai",
+  description: "Naršykite viešus sporto turnyrus. Peržiūrėkite grupių lenteles, tvarkaraščius ir rezultatus realiu laiku.",
+};
 
 export default async function TournamentsPage() {
   const supabase = await createClient();

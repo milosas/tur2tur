@@ -12,6 +12,7 @@ import { PlayoffBracket } from "@/components/tournament/PlayoffBracket";
 import { TeamDetailDialog } from "@/components/tournament/TeamDetailDialog";
 import { Badge } from "@/components/ui/badge";
 import { TournamentQR } from "@/components/tournament/TournamentQR";
+import Image from "next/image";
 import { Users, Trophy, Mail, Phone, ArrowLeft } from "lucide-react";
 import type { DBMatch, DBGroup, TeamNameMap, Group, Match, PlayoffRound, DBProfile } from "@/lib/types";
 import { dbMatchToMatch, dbGroupToGroup } from "@/lib/types";
@@ -328,9 +329,11 @@ export function TournamentDetail({
                 <CardHeader className="pb-2">
                   <div className="flex items-center gap-3">
                     {team.logo_url ? (
-                      <img
+                      <Image
                         src={team.logo_url}
                         alt={team.name}
+                        width={40}
+                        height={40}
                         className="h-9 w-9 sm:h-10 sm:w-10 rounded-full object-cover shrink-0"
                       />
                     ) : (
@@ -386,9 +389,11 @@ export function TournamentDetail({
 
         <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-4 animate-fade-in-up">
           {tournament.logo_url && (
-            <img
+            <Image
               src={tournament.logo_url}
               alt={tournament.name}
+              width={80}
+              height={80}
               className="h-16 w-16 sm:h-20 sm:w-20 rounded-xl object-cover border shrink-0"
             />
           )}
@@ -463,9 +468,11 @@ export function TournamentDetail({
           <CardContent className="space-y-2">
             <div className="flex items-center gap-3">
               {organizer.avatar_url ? (
-                <img
+                <Image
                   src={organizer.avatar_url}
                   alt={organizer.full_name || ""}
+                  width={40}
+                  height={40}
                   className="h-10 w-10 rounded-full object-cover border shrink-0"
                 />
               ) : (

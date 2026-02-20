@@ -1,10 +1,30 @@
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { TournamentDetail } from "./TournamentDetail";
+import type { Metadata } from "next";
 
 type PageProps = {
   params: Promise<{ id: string; locale: string }>;
 };
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { id } = await params;
+  const supabase = await createClient();
+  const { data: tournament } = await supabase
+    .from("tournaments")
+    .select("name, description, format")
+    .eq("id", id)
+    .single();
+
+  if (!tournament) {
+    return { title: "Turnyras nerastas" };
+  }
+
+  return {
+    title: tournament.name,
+    description: tournament.description || `${tournament.name} - sporto turnyras platformoje tur2tur`,
+  };
+}
 
 export default async function TournamentDetailPage({ params }: PageProps) {
   const { id, locale } = await params;

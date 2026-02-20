@@ -3,6 +3,12 @@ import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import { TournamentForm } from "@/components/tournament/TournamentForm";
 import { FREE_TOURNAMENT_LIMIT } from "@/lib/stripe";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Sukurti turnyrą",
+  description: "Sukurkite naują sporto turnyrą. Pasirinkite formatą, pridėkite komandas ir pradėkite varžybas.",
+};
 
 export default async function CreateTournamentPage() {
   const supabase = await createClient();

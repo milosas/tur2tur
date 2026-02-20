@@ -3,6 +3,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Users, Trophy, Swords, RefreshCw } from "lucide-react";
 import { PageBanner } from "@/components/PageBanner";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Formatai",
+  description: "Turnyrų formatai: grupės + atkrintamosios, ratų sistema, viengubas eliminavimas ir grupės su perskirstymu. Pasirinkite tinkamiausią formatą savo turnyrui.",
+};
 
 const formatConfigs = [
   { key: "groupPlayoff", icon: Trophy, color: "text-yellow-600" },

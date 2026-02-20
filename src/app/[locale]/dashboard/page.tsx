@@ -4,6 +4,12 @@ import { createClient } from "@/lib/supabase/server";
 import { DashboardContent } from "./DashboardContent";
 import { PageBanner } from "@/components/PageBanner";
 import { FREE_TOURNAMENT_LIMIT } from "@/lib/stripe";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Valdymo panelė",
+  description: "Valdykite savo turnyrus, komandas ir varžybų rezultatus vienoje vietoje.",
+};
 
 export default async function DashboardPage() {
   const supabase = await createClient();

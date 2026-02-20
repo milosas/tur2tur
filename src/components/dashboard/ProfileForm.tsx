@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
+import Image from "next/image";
 import { Upload, X, Check, Pencil, Mail, Phone, User, Crown, Zap, CreditCard } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "@/i18n/navigation";
@@ -144,9 +145,11 @@ export function ProfileForm({
           {/* Logo + Name */}
           <div className="flex items-center gap-4">
             {savedData.avatarUrl ? (
-              <img
+              <Image
                 src={savedData.avatarUrl}
                 alt="Logo"
+                width={80}
+                height={80}
                 className="h-20 w-20 rounded-lg object-cover border shrink-0"
               />
             ) : (
@@ -223,9 +226,11 @@ export function ProfileForm({
         <div className="flex items-center gap-4">
           {avatarUrl ? (
             <div className="relative">
-              <img
+              <Image
                 src={avatarUrl}
                 alt="Logo"
+                width={80}
+                height={80}
                 className="h-20 w-20 rounded-lg object-cover border shrink-0"
               />
               <button

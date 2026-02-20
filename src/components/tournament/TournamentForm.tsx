@@ -15,6 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import Image from "next/image";
 import { Globe, Lock, AlertTriangle, Save, Megaphone, ImagePlus, X } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 
@@ -180,9 +181,11 @@ export function TournamentForm({
         <Label>{t("tournamentLogo")}</Label>
         {logoUrl ? (
           <div className="relative group w-full">
-            <img
+            <Image
               src={logoUrl}
               alt="Logo"
+              width={400}
+              height={200}
               className="w-full rounded-lg object-contain border bg-muted/30"
               style={{ maxHeight: "200px" }}
             />

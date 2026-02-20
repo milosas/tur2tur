@@ -1,4 +1,10 @@
 import { useTranslations } from "next-intl";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Privatumo politika",
+  description: "tur2tur privatumo politika. Sužinokite, kaip renkame, naudojame ir saugome jūsų asmens duomenis.",
+};
 
 export default function PrivacyPage() {
   const t = useTranslations("Privacy");

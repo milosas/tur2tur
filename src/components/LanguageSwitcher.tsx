@@ -2,6 +2,7 @@
 
 import { useLocale } from "next-intl";
 import { useRouter, usePathname } from "next/navigation";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -19,9 +20,8 @@ const locales = [
 
 function Flag({ country, size = 20 }: { country: string; size?: number }) {
   return (
-    <img
+    <Image
       src={`https://flagcdn.com/w40/${country}.png`}
-      srcSet={`https://flagcdn.com/w80/${country}.png 2x`}
       width={size}
       height={Math.round(size * 0.75)}
       alt=""

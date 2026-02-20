@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { DeleteDialog } from "@/components/tournament/DeleteDialog";
 import { TournamentQR } from "@/components/tournament/TournamentQR";
+import Image from "next/image";
 import { Plus, Pencil, Users, Swords, UserCircle, Globe, Lock, Crown, Zap, ExternalLink } from "lucide-react";
 import type { SubscriptionTier } from "@/lib/types";
 
@@ -181,9 +182,11 @@ export function DashboardContent({
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex items-center gap-2">
                     {tournament.logo_url && (
-                      <img
+                      <Image
                         src={tournament.logo_url}
                         alt=""
+                        width={64}
+                        height={64}
                         className="h-16 w-16 rounded-lg object-cover shrink-0"
                       />
                     )}

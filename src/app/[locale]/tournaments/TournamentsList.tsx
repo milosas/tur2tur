@@ -3,6 +3,7 @@
 import { useTranslations, useLocale } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Badge } from "@/components/ui/badge";
+import Image from "next/image";
 import { User, MapPin, Calendar, Users } from "lucide-react";
 import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
@@ -84,9 +85,11 @@ function TournamentCard({ tournament, category }: { tournament: TournamentListIt
       className="flex items-center gap-2 p-3 hover:bg-muted/50 transition-colors"
     >
       {tournament.logo_url ? (
-        <img
+        <Image
           src={tournament.logo_url}
           alt=""
+          width={64}
+          height={64}
           className="h-16 w-16 rounded-lg object-cover shrink-0"
         />
       ) : primary ? (
@@ -254,9 +257,11 @@ function FeaturedTournamentCard({ tournament }: { tournament: TournamentListItem
     >
       <div className="flex items-center gap-3 mb-4">
         {tournament.logo_url ? (
-          <img
+          <Image
             src={tournament.logo_url}
             alt=""
+            width={64}
+            height={64}
             className="h-16 w-16 rounded-2xl object-cover shrink-0 ring-2 ring-white/20"
           />
         ) : (
@@ -331,9 +336,11 @@ function TournamentListRow({ tournament, category }: { tournament: TournamentLis
     >
       <div className="shrink-0">
         {tournament.logo_url ? (
-          <img
+          <Image
             src={tournament.logo_url}
             alt=""
+            width={48}
+            height={48}
             className="h-12 w-12 rounded-xl object-cover"
           />
         ) : primary ? (
