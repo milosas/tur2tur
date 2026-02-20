@@ -23,12 +23,25 @@ export async function POST(req: NextRequest) {
   }
 
   try {
+    // Verify Stripe config
+    if (!process.env.STRIPE_SECRET_KEY) {
+      return NextResponse.json({ error: "Stripe not configured: missing secret key" }, { status: 500 });
+    }
+    if (!PRICES[plan]) {
+      return NextResponse.json({ error: `Stripe not configured: missing price ID for ${plan}` }, { status: 500 });
+    }
+
     // Get or create Stripe customer
-    const { data: profile } = await supabase
+    const { data: profile, error: profileError } = await supabase
       .from("profiles")
       .select("stripe_customer_id")
       .eq("id", user.id)
       .single();
+
+    if (profileError) {
+      console.error("Profile query error:", profileError);
+      return NextResponse.json({ error: `Profile error: ${profileError.message}` }, { status: 500 });
+    }
 
     let customerId = profile?.stripe_customer_id;
 
@@ -45,13 +58,15 @@ export async function POST(req: NextRequest) {
         .eq("id", user.id);
     }
 
+    const PRODUCTION_URL = "https://tur2tur.com";
     const ALLOWED_ORIGINS = [
+      PRODUCTION_URL,
       process.env.NEXT_PUBLIC_SITE_URL,
-      "https://tur2tur.com",
-      ...(process.env.NODE_ENV !== "production" ? ["http://localhost:3000"] : []),
+      ...(process.env.NODE_ENV !== "production" ? ["http://localhost:3000", "http://localhost:3002"] : []),
     ].filter(Boolean);
     const rawOrigin = req.headers.get("origin") || "";
-    const origin = ALLOWED_ORIGINS.includes(rawOrigin) ? rawOrigin : ALLOWED_ORIGINS[0]!;
+    // Always prefer production URL for Stripe return
+    const origin = ALLOWED_ORIGINS.includes(rawOrigin) ? PRODUCTION_URL : PRODUCTION_URL;
 
     const session = await getStripe().checkout.sessions.create({
       ui_mode: "embedded",
