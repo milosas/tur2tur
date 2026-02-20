@@ -24,7 +24,7 @@ const nextConfig: NextConfig = {
               "default-src 'self'",
               "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com",
               "style-src 'self' 'unsafe-inline'",
-              "img-src 'self' https://*.supabase.co https://*.supabase.in https://lh3.googleusercontent.com https://flagcdn.com https://images.unsplash.com data: blob:",
+              "img-src 'self' https://*.supabase.co https://*.supabase.in https://lh3.googleusercontent.com https://flagcdn.com https://images.unsplash.com https://images.pexels.com data: blob:",
               "font-src 'self'",
               "frame-src https://js.stripe.com",
               "connect-src 'self' https://*.supabase.co https://*.supabase.in https://api.stripe.com",
@@ -53,6 +53,14 @@ const nextConfig: NextConfig = {
       {
         protocol: 'https',
         hostname: 'flagcdn.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'images.pexels.com',
       },
     ],
   },
