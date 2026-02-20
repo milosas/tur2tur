@@ -51,17 +51,28 @@ export async function POST(req: NextRequest) {
     }, { status: 500 });
   }
 
-  // Step 4: Get profile
+  // Step 4: Get or create profile
   let customerId: string | null = null;
   try {
     const { data: profile, error: profileError } = await supabase
       .from("profiles")
       .select("stripe_customer_id")
       .eq("id", user.id)
-      .single();
+      .maybeSingle();
 
     if (profileError) {
       return NextResponse.json({ error: "STEP4_PROFILE: " + profileError.message + " (code: " + profileError.code + ")" }, { status: 500 });
+    }
+
+    // Create profile if it doesn't exist
+    if (!profile) {
+      const { error: insertError } = await supabase
+        .from("profiles")
+        .insert({ id: user.id, full_name: user.user_metadata?.full_name ?? null });
+
+      if (insertError) {
+        return NextResponse.json({ error: "STEP4_CREATE_PROFILE: " + insertError.message }, { status: 500 });
+      }
     }
 
     customerId = profile?.stripe_customer_id ?? null;
