@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { getStripe } from "@/lib/stripe";
+import { rateLimit } from "@/lib/rate-limit";
 
 export async function POST(req: NextRequest) {
   const supabase = await createClient();
@@ -10,6 +11,10 @@ export async function POST(req: NextRequest) {
 
   if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  if (!rateLimit(`portal:${user.id}`, 5, 60_000)) {
+    return NextResponse.json({ error: "Too many requests" }, { status: 429 });
   }
 
   const { data: profile } = await supabase
@@ -28,7 +33,7 @@ export async function POST(req: NextRequest) {
   const ALLOWED_ORIGINS = [
     process.env.NEXT_PUBLIC_SITE_URL,
     "https://tur2tur.com",
-    "http://localhost:3000",
+    ...(process.env.NODE_ENV !== "production" ? ["http://localhost:3000"] : []),
   ].filter(Boolean);
   const rawOrigin = req.headers.get("origin") || "";
   const origin = ALLOWED_ORIGINS.includes(rawOrigin) ? rawOrigin : ALLOWED_ORIGINS[0]!;

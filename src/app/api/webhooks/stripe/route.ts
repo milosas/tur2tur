@@ -4,23 +4,25 @@ import { createClient } from "@supabase/supabase-js";
 
 // Use service role for webhook — bypasses RLS
 function getAdminClient() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-  );
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !key) {
+    throw new Error("Missing SUPABASE_URL or SERVICE_ROLE_KEY");
+  }
+  return createClient(url, key);
 }
 
 export async function POST(req: NextRequest) {
   const body = await req.text();
-  const sig = req.headers.get("stripe-signature")!;
+  const sig = req.headers.get("stripe-signature");
+  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+  if (!sig || !webhookSecret) {
+    return NextResponse.json({ error: "Missing signature or secret" }, { status: 400 });
+  }
 
   let event;
   try {
-    event = getStripe().webhooks.constructEvent(
-      body,
-      sig,
-      process.env.STRIPE_WEBHOOK_SECRET!
-    );
+    event = getStripe().webhooks.constructEvent(body, sig, webhookSecret);
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : "Unknown error";
     return NextResponse.json(
@@ -40,19 +42,10 @@ export async function POST(req: NextRequest) {
       if (!userId) break;
 
       if (plan === "single") {
-        // Increment tournament credits
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select("tournament_credits")
-          .eq("id", userId)
-          .single();
-
-        await supabase
-          .from("profiles")
-          .update({
-            tournament_credits: (profile?.tournament_credits ?? 0) + 1,
-          })
-          .eq("id", userId);
+        // Atomic increment — prevents race condition with concurrent webhooks
+        await supabase.rpc("increment_tournament_credits", {
+          user_id: userId,
+        });
       } else if (plan === "unlimited") {
         // Set subscription — add 30 days from now as default
         const endDate = new Date();
