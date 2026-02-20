@@ -72,7 +72,9 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json({ clientSecret: session.client_secret });
-  } catch {
-    return NextResponse.json({ error: "Payment service error" }, { status: 500 });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Unknown error";
+    console.error("Checkout error:", message);
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }
