@@ -4,10 +4,21 @@ import { getStripe, PRICES } from "@/lib/stripe";
 import { rateLimit } from "@/lib/rate-limit";
 
 export async function POST(req: NextRequest) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  // Step 1: Auth
+  let supabase;
+  try {
+    supabase = await createClient();
+  } catch (err) {
+    return NextResponse.json({ error: "STEP1_SUPABASE_INIT: " + String(err) }, { status: 500 });
+  }
+
+  let user;
+  try {
+    const { data } = await supabase.auth.getUser();
+    user = data.user;
+  } catch (err) {
+    return NextResponse.json({ error: "STEP1_AUTH: " + String(err) }, { status: 500 });
+  }
 
   if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -17,21 +28,32 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Too many requests" }, { status: 429 });
   }
 
-  const { plan } = await req.json();
-  if (plan !== "single" && plan !== "unlimited") {
-    return NextResponse.json({ error: "Invalid plan" }, { status: 400 });
+  // Step 2: Parse body
+  let plan: string;
+  try {
+    const body = await req.json();
+    plan = body.plan;
+  } catch (err) {
+    return NextResponse.json({ error: "STEP2_PARSE_BODY: " + String(err) }, { status: 400 });
   }
 
-  try {
-    // Verify Stripe config
-    if (!process.env.STRIPE_SECRET_KEY) {
-      return NextResponse.json({ error: "Stripe not configured: missing secret key" }, { status: 500 });
-    }
-    if (!PRICES[plan]) {
-      return NextResponse.json({ error: `Stripe not configured: missing price ID for ${plan}` }, { status: 500 });
-    }
+  if (plan !== "single" && plan !== "unlimited") {
+    return NextResponse.json({ error: "Invalid plan: " + plan }, { status: 400 });
+  }
 
-    // Get or create Stripe customer
+  // Step 3: Verify Stripe config
+  if (!process.env.STRIPE_SECRET_KEY) {
+    return NextResponse.json({ error: "STEP3: missing STRIPE_SECRET_KEY" }, { status: 500 });
+  }
+  if (!PRICES[plan]) {
+    return NextResponse.json({
+      error: `STEP3: missing price ID for ${plan}. STRIPE_PRICE_SINGLE=${process.env.STRIPE_PRICE_SINGLE ? "set" : "MISSING"}, STRIPE_PRICE_UNLIMITED=${process.env.STRIPE_PRICE_UNLIMITED ? "set" : "MISSING"}`,
+    }, { status: 500 });
+  }
+
+  // Step 4: Get profile
+  let customerId: string | null = null;
+  try {
     const { data: profile, error: profileError } = await supabase
       .from("profiles")
       .select("stripe_customer_id")
@@ -39,13 +61,17 @@ export async function POST(req: NextRequest) {
       .single();
 
     if (profileError) {
-      console.error("Profile query error:", profileError);
-      return NextResponse.json({ error: `Profile error: ${profileError.message}` }, { status: 500 });
+      return NextResponse.json({ error: "STEP4_PROFILE: " + profileError.message + " (code: " + profileError.code + ")" }, { status: 500 });
     }
 
-    let customerId = profile?.stripe_customer_id;
+    customerId = profile?.stripe_customer_id ?? null;
+  } catch (err) {
+    return NextResponse.json({ error: "STEP4_PROFILE_CATCH: " + String(err) }, { status: 500 });
+  }
 
-    if (!customerId) {
+  // Step 5: Create Stripe customer if needed
+  if (!customerId) {
+    try {
       const customer = await getStripe().customers.create({
         email: user.email,
         metadata: { supabase_user_id: user.id },
@@ -56,18 +82,13 @@ export async function POST(req: NextRequest) {
         .from("profiles")
         .update({ stripe_customer_id: customerId })
         .eq("id", user.id);
+    } catch (err) {
+      return NextResponse.json({ error: "STEP5_STRIPE_CUSTOMER: " + String(err) }, { status: 500 });
     }
+  }
 
-    const PRODUCTION_URL = "https://tur2tur.com";
-    const ALLOWED_ORIGINS = [
-      PRODUCTION_URL,
-      process.env.NEXT_PUBLIC_SITE_URL,
-      ...(process.env.NODE_ENV !== "production" ? ["http://localhost:3000", "http://localhost:3002"] : []),
-    ].filter(Boolean);
-    const rawOrigin = req.headers.get("origin") || "";
-    // Always prefer production URL for Stripe return
-    const origin = ALLOWED_ORIGINS.includes(rawOrigin) ? PRODUCTION_URL : PRODUCTION_URL;
-
+  // Step 6: Create checkout session
+  try {
     const session = await getStripe().checkout.sessions.create({
       ui_mode: "embedded",
       customer: customerId,
@@ -79,7 +100,7 @@ export async function POST(req: NextRequest) {
         },
       ],
       mode: plan === "unlimited" ? "subscription" : "payment",
-      return_url: `${origin}/pricing/checkout/return?session_id={CHECKOUT_SESSION_ID}`,
+      return_url: `https://tur2tur.com/pricing/checkout/return?session_id={CHECKOUT_SESSION_ID}`,
       metadata: {
         supabase_user_id: user.id,
         plan,
@@ -88,8 +109,6 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ clientSecret: session.client_secret });
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Unknown error";
-    console.error("Checkout error:", message);
-    return NextResponse.json({ error: message }, { status: 500 });
+    return NextResponse.json({ error: "STEP6_CHECKOUT_SESSION: " + String(err) }, { status: 500 });
   }
 }
