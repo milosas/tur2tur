@@ -5,6 +5,15 @@ const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  // Hostinger only exposes env vars at build time, not runtime.
+  // This inlines server-side vars into the build so API routes can access them.
+  env: {
+    STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
+    STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
+    STRIPE_PRICE_SINGLE: process.env.STRIPE_PRICE_SINGLE,
+    STRIPE_PRICE_UNLIMITED: process.env.STRIPE_PRICE_UNLIMITED,
+    SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY,
+  },
   experimental: {
     optimizePackageImports: ['lucide-react'],
   },
