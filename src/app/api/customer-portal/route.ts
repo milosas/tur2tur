@@ -38,10 +38,14 @@ export async function POST(req: NextRequest) {
   const rawOrigin = req.headers.get("origin") || "";
   const origin = ALLOWED_ORIGINS.includes(rawOrigin) ? rawOrigin : ALLOWED_ORIGINS[0]!;
 
-  const portalSession = await getStripe().billingPortal.sessions.create({
-    customer: profile.stripe_customer_id,
-    return_url: `${origin}/dashboard/profile`,
-  });
+  try {
+    const portalSession = await getStripe().billingPortal.sessions.create({
+      customer: profile.stripe_customer_id,
+      return_url: `${origin}/dashboard/profile`,
+    });
 
-  return NextResponse.json({ url: portalSession.url });
+    return NextResponse.json({ url: portalSession.url });
+  } catch {
+    return NextResponse.json({ error: "Billing service error" }, { status: 500 });
+  }
 }

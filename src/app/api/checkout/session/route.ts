@@ -19,16 +19,20 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Missing session_id" }, { status: 400 });
   }
 
-  const session = await getStripe().checkout.sessions.retrieve(sessionId);
+  try {
+    const session = await getStripe().checkout.sessions.retrieve(sessionId);
 
-  // Only allow the session owner to retrieve their own session
-  if (session.metadata?.supabase_user_id !== user.id) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    // Only allow the session owner to retrieve their own session
+    if (session.metadata?.supabase_user_id !== user.id) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
+    return NextResponse.json({
+      status: session.status,
+      customerEmail: session.customer_details?.email,
+      plan: session.metadata?.plan,
+    });
+  } catch {
+    return NextResponse.json({ error: "Failed to retrieve session" }, { status: 500 });
   }
-
-  return NextResponse.json({
-    status: session.status,
-    customerEmail: session.customer_details?.email,
-    plan: session.metadata?.plan,
-  });
 }
