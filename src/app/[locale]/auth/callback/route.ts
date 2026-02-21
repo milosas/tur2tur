@@ -39,9 +39,6 @@ export async function GET(
 
   const origin = getOrigin(request);
 
-  // Log for debugging (visible in Hostinger logs)
-  console.log('[auth/callback] origin:', origin, '| locale:', locale, '| host:', request.headers.get('host'), '| x-forwarded-host:', request.headers.get('x-forwarded-host'), '| SITE_URL env:', process.env.NEXT_PUBLIC_SITE_URL ?? 'NOT SET');
-
   // Handle OAuth errors from Supabase (e.g. bad_oauth_state)
   if (error) {
     console.error('[auth/callback] OAuth error:', error, errorDescription);
