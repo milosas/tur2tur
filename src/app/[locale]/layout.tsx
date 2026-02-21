@@ -26,25 +26,25 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "tur2tur — Baltic Tournament Planner",
+    default: "tur2tur — Tournament Planner",
     template: "%s | tur2tur",
   },
   description:
-    "Create and manage sports tournaments in the Baltic region. Group stages, playoffs, brackets, live scores — all in one place.",
+    "Create and manage sports tournaments with ease. Group stages, playoffs, brackets, live scores — all in one place.",
   metadataBase: new URL("https://tur2tur.com"),
   openGraph: {
     type: "website",
     siteName: "tur2tur",
-    title: "tur2tur — Baltic Tournament Planner",
+    title: "tur2tur — Tournament Planner",
     description:
-      "Create and manage sports tournaments in the Baltic region. Group stages, playoffs, brackets, live scores.",
+      "Create and manage sports tournaments with ease. Group stages, playoffs, brackets, live scores.",
     url: "https://tur2tur.com",
   },
   twitter: {
     card: "summary_large_image",
-    title: "tur2tur — Baltic Tournament Planner",
+    title: "tur2tur — Tournament Planner",
     description:
-      "Create and manage sports tournaments in the Baltic region.",
+      "Create and manage sports tournaments with ease.",
   },
   robots: {
     index: true,
@@ -113,7 +113,7 @@ export default async function LocaleLayout({ children, params }: Props) {
               name: "tur2tur",
               url: "https://tur2tur.com",
               description:
-                "Create and manage sports tournaments in the Baltic region. Group stages, playoffs, brackets, live scores.",
+                "Create and manage sports tournaments with ease. Group stages, playoffs, brackets, live scores.",
               applicationCategory: "SportsApplication",
               operatingSystem: "Web",
               offers: [
@@ -137,7 +137,7 @@ export default async function LocaleLayout({ children, params }: Props) {
                 },
               ],
               availableLanguage: ["lt", "lv", "et", "en"],
-              areaServed: ["LT", "LV", "EE"],
+              areaServed: "Worldwide",
             }),
           }}
         />

@@ -24,7 +24,7 @@
   },
   "Home": {
     "title": "Nuo pirmo švilpuko iki finalo",
-    "subtitle": "Visa ko reikia turnyrui organizuoti — schemos, komandos, rezultatai vienoje vietoje. Sukurta Baltijos regionui.",
+    "subtitle": "Visa ko reikia turnyrui organizuoti — schemos, komandos, rezultatai vienoje vietoje.",
     "cta": "Pradėkite nemokamai",
     "features": {
       "organize": "Bet koks formatas, jūsų taisyklės",
@@ -420,13 +420,13 @@
   },
   "About": {
     "title": "Apie tur2tur",
-    "intro": "tur2tur — visa ko reikia turnyrui valdyti vienoje platformoje, sukurta Baltijos regionui. Padedame organizatoriams Lietuvoje, Latvijoje ir Estijoje kurti, valdyti ir dalintis sporto turnyrais.",
+    "intro": "tur2tur — visa ko reikia turnyrui valdyti vienoje platformoje. Padedame organizatoriams visame pasaulyje kurti, valdyti ir dalintis sporto turnyrais.",
     "missionTitle": "Mūsų misija",
     "missionDesc": "Padaryti turnyrų organizavimą paprastą — kad treneriai, klubai ir bendruomenės galėtų susitelkti į žaidimą, o ne į popierizmą.",
     "whoTitle": "Kas mes esame",
     "whoDesc": "Esame nedidelė sporto entuziastų ir programuotojų komanda, kuriai atsibodo valdyti turnyrus naudojant skaičiuokles ir žinučių programėles.",
-    "regionTitle": "Baltijos fokusas",
-    "regionDesc": "Sukurta specialiai Baltijos rinkai su lietuvių, latvių, estų ir anglų kalbų palaikymu. Vietiniai formatai, vietiniai poreikiai.",
+    "regionTitle": "Globalus pasiekiamumas",
+    "regionDesc": "Prieinama keliomis kalbomis: lietuvių, latvių, estų ir anglų. Tinka bet kuriam sportui, bet kuriam formatui.",
     "contactTitle": "Susisiekite",
     "contactDesc": "Klausimai, partnerystė ar atsiliepimai? Rašykite mums",
     "whyTitle": "Kodėl tur2tur?",
@@ -434,7 +434,7 @@
     "valuesTitle": "Mūsų vertybės",
     "value1": "Paprasta pagal nutylėjimą — galinga, kai reikia",
     "value2": "Sąžiningos kainos — dosnus nemokamas planas, prieinami atnaujinimai",
-    "value3": "Baltija pirmiausia — sukurta mūsų regiono sporto kultūrai",
+    "value3": "Sukurta organizatoriams — pritaikyta tikrai sporto kultūrai",
     "value4": "Skaidrumas — jūsų duomenys, jūsų turnyrai, jūsų taisyklės"
   },
   "Privacy": {

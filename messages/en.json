@@ -24,7 +24,7 @@
   },
   "Home": {
     "title": "From First Whistle to Final Score",
-    "subtitle": "The all-in-one tournament platform for the Baltics. Create brackets, manage teams, and track results — all in one place.",
+    "subtitle": "The all-in-one tournament platform. Create brackets, manage teams, and track results — all in one place.",
     "cta": "Start organizing for free",
     "features": {
       "organize": "Any Format, Your Rules",
@@ -420,13 +420,13 @@
   },
   "About": {
     "title": "About tur2tur",
-    "intro": "tur2tur is the all-in-one tournament management platform built for the Baltic region. We help organizers in Lithuania, Latvia, and Estonia create, manage, and share sports tournaments with ease.",
+    "intro": "tur2tur is the all-in-one tournament management platform. We help organizers everywhere create, manage, and share sports tournaments with ease.",
     "missionTitle": "Our Mission",
     "missionDesc": "To make tournament organizing effortless — so coaches, clubs, and communities can focus on the game, not the paperwork.",
     "whoTitle": "Who We Are",
     "whoDesc": "We're a small team of sports enthusiasts and developers who got tired of managing tournaments with spreadsheets and messaging apps.",
-    "regionTitle": "Baltic Focus",
-    "regionDesc": "Built specifically for the Baltic market with support for Lithuanian, Latvian, Estonian, and English. Local formats, local needs.",
+    "regionTitle": "Global Reach",
+    "regionDesc": "Available in multiple languages with support for Lithuanian, Latvian, Estonian, and English. Works for any sport, any format.",
     "contactTitle": "Get in Touch",
     "contactDesc": "Questions, partnerships, or feedback? Reach us at",
     "whyTitle": "Why tur2tur?",
@@ -434,7 +434,7 @@
     "valuesTitle": "Our Values",
     "value1": "Simple by default — powerful when you need it",
     "value2": "Fair pricing — generous free tier, affordable upgrades",
-    "value3": "Baltic first — designed for our region's sports culture",
+    "value3": "Built for organizers — designed for real sports culture",
     "value4": "Transparent — your data, your tournaments, your rules"
   },
   "Privacy": {

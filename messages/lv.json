@@ -24,7 +24,7 @@
   },
   "Home": {
     "title": "No pirmā svilpiena līdz finālam",
-    "subtitle": "Viss, kas nepieciešams turnīra organizēšanai — shēmas, komandas, rezultāti vienuviet. Izveidots Baltijas reģionam.",
+    "subtitle": "Viss, kas nepieciešams turnīra organizēšanai — shēmas, komandas, rezultāti vienuviet.",
     "cta": "Sāciet bez maksas",
     "features": {
       "organize": "Jebkurš formāts, jūsu noteikumi",
@@ -420,13 +420,13 @@
   },
   "About": {
     "title": "Par tur2tur",
-    "intro": "tur2tur ir visaptveroša turnīru pārvaldības platforma, kas izveidota Baltijas reģionam. Mēs palīdzam organizatoriem Lietuvā, Latvijā un Igaunijā veidot, pārvaldīt un dalīties ar sporta turnīriem.",
+    "intro": "tur2tur ir visaptveroša turnīru pārvaldības platforma. Mēs palīdzam organizatoriem visā pasaulē veidot, pārvaldīt un dalīties ar sporta turnīriem.",
     "missionTitle": "Mūsu misija",
     "missionDesc": "Padarīt turnīru organizēšanu vienkāršu — lai treneri, klubi un kopienas varētu koncentrēties uz spēli, nevis uz dokumentiem.",
     "whoTitle": "Kas mēs esam",
     "whoDesc": "Mēs esam neliela sporta entuziastu un izstrādātāju komanda, kas nogurusi no turnīru pārvaldīšanas ar izklājlapām un ziņojumu lietotnēm.",
-    "regionTitle": "Baltijas fokuss",
-    "regionDesc": "Izveidota speciāli Baltijas tirgum ar latviešu, lietuviešu, igauņu un angļu valodu atbalstu. Vietējie formāti, vietējās vajadzības.",
+    "regionTitle": "Globāla pieejamība",
+    "regionDesc": "Pieejama vairākās valodās: latviešu, lietuviešu, igauņu un angļu. Darbojas jebkuram sportam, jebkuram formātam.",
     "contactTitle": "Sazināties",
     "contactDesc": "Jautājumi, partnerība vai atsauksmes? Rakstiet mums",
     "whyTitle": "Kāpēc tur2tur?",
@@ -434,7 +434,7 @@
     "valuesTitle": "Mūsu vērtības",
     "value1": "Vienkāršs pēc noklusējuma — jaudīgs, kad nepieciešams",
     "value2": "Godīga cenu politika — dāsns bezmaksas plāns, pieejami jauninājumi",
-    "value3": "Baltija vispirms — veidota mūsu reģiona sporta kultūrai",
+    "value3": "Veidota organizatoriem — pielāgota īstai sporta kultūrai",
     "value4": "Caurspīdīgums — jūsu dati, jūsu turnīri, jūsu noteikumi"
   },
   "Privacy": {

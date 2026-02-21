@@ -24,7 +24,7 @@
   },
   "Home": {
     "title": "Esimesest vilest finaali väravani",
-    "subtitle": "Kõik, mis turniiride korraldamiseks vaja — skeemid, meeskonnad, tulemused ühes kohas. Loodud Balti regioonile.",
+    "subtitle": "Kõik, mis turniiride korraldamiseks vaja — skeemid, meeskonnad, tulemused ühes kohas.",
     "cta": "Alustage tasuta",
     "features": {
       "organize": "Iga formaat, teie reeglid",
@@ -420,13 +420,13 @@
   },
   "About": {
     "title": "Meist tur2tur",
-    "intro": "tur2tur on kõik-ühes turniiride haldamise platvorm, mis on loodud Baltimaade jaoks. Aitame korraldajatel Leedus, Lätis ja Eestis sporditurniire hõlpsalt luua, hallata ja jagada.",
+    "intro": "tur2tur on kõik-ühes turniiride haldamise platvorm. Aitame korraldajatel üle kogu maailma sporditurniire hõlpsalt luua, hallata ja jagada.",
     "missionTitle": "Meie missioon",
     "missionDesc": "Muuta turniiride korraldamine pingutusevabaks — et treenerid, klubid ja kogukonnad saaksid keskenduda mängule, mitte paberitööle.",
     "whoTitle": "Kes me oleme",
     "whoDesc": "Oleme väike meeskond spordihuvilisi ja arendajaid, kes väsisid turniiride haldamisest tabelite ja sõnumirakenduste abil.",
-    "regionTitle": "Baltimaade fookus",
-    "regionDesc": "Loodud spetsiaalselt Baltimaade turu jaoks koos leedu, läti, eesti ja inglise keele toega. Kohalikud formaadid, kohalikud vajadused.",
+    "regionTitle": "Ülemaailmne kättesaadavus",
+    "regionDesc": "Saadaval mitmes keeles: leedu, läti, eesti ja inglise. Töötab iga spordiala ja iga formaadiga.",
     "contactTitle": "Võta ühendust",
     "contactDesc": "Küsimused, koostöö või tagasiside? Kirjuta meile",
     "whyTitle": "Miks tur2tur?",
@@ -434,7 +434,7 @@
     "valuesTitle": "Meie väärtused",
     "value1": "Vaikimisi lihtne — võimas, kui vaja",
     "value2": "Õiglane hinnakujundus — helde tasuta pakett, taskukohased uuendused",
-    "value3": "Baltimaad esmalt — loodud meie piirkonna spordikultuuri jaoks",
+    "value3": "Loodud korraldajatele — kohandatud tõelisele spordikultuurile",
     "value4": "Läbipaistev — teie andmed, teie turniirid, teie reeglid"
   },
   "Privacy": {
