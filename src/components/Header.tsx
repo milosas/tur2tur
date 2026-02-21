@@ -124,18 +124,21 @@ export function Header() {
           )}
         </div>
 
-        {/* Mobile menu button */}
-        <button
-          className="md:hidden p-2 rounded-lg hover:bg-primary/10 transition-all tap-target"
-          onClick={() => setMobileOpen(!mobileOpen)}
-          aria-label={mobileOpen ? "Close menu" : "Open menu"}
-          aria-expanded={mobileOpen}
-        >
-          <div className="relative w-6 h-6">
-            <Menu className={`h-6 w-6 absolute inset-0 transition-all duration-300 text-foreground ${mobileOpen ? "opacity-0 rotate-90 scale-75" : "opacity-100 rotate-0 scale-100"}`} />
-            <X className={`h-6 w-6 absolute inset-0 transition-all duration-300 text-foreground ${mobileOpen ? "opacity-100 rotate-0 scale-100" : "opacity-0 -rotate-90 scale-75"}`} />
-          </div>
-        </button>
+        {/* Mobile: language switcher + menu button */}
+        <div className="md:hidden flex items-center gap-1">
+          <LanguageSwitcher />
+          <button
+            className="p-2 rounded-lg hover:bg-primary/10 transition-all tap-target"
+            onClick={() => setMobileOpen(!mobileOpen)}
+            aria-label={mobileOpen ? "Close menu" : "Open menu"}
+            aria-expanded={mobileOpen}
+          >
+            <div className="relative w-6 h-6">
+              <Menu className={`h-6 w-6 absolute inset-0 transition-all duration-300 text-foreground ${mobileOpen ? "opacity-0 rotate-90 scale-75" : "opacity-100 rotate-0 scale-100"}`} />
+              <X className={`h-6 w-6 absolute inset-0 transition-all duration-300 text-foreground ${mobileOpen ? "opacity-100 rotate-0 scale-100" : "opacity-0 -rotate-90 scale-75"}`} />
+            </div>
+          </button>
+        </div>
       </div>
 
       {/* Mobile menu overlay */}
@@ -146,7 +149,7 @@ export function Header() {
       >
         {/* Backdrop */}
         <div
-          className={`absolute inset-0 bg-black/40 backdrop-blur-md transition-opacity duration-300 ${
+          className={`absolute inset-0 bg-black/50 transition-opacity duration-300 ${
             mobileOpen ? "opacity-100" : "opacity-0"
           }`}
           style={{ touchAction: "none" }}
@@ -156,7 +159,7 @@ export function Header() {
 
         {/* Menu panel */}
         <div
-          className={`relative glass-intense border-t border-border/50 shadow-2xl transition-[transform,opacity] duration-300 ease-out overscroll-y-contain ${
+          className={`relative bg-background border-t border-border shadow-2xl transition-[transform,opacity] duration-300 ease-out overscroll-y-contain ${
             mobileOpen ? "translate-y-0 opacity-100" : "-translate-y-4 opacity-0"
           }`}
         >
@@ -201,9 +204,8 @@ export function Header() {
               {t("pricing")}
             </Link>
           </nav>
-          <div className="flex items-center gap-2 px-4 py-3 border-t border-border/50">
+          <div className="flex items-center gap-2 px-4 py-3 border-t border-border">
             <ThemeToggle />
-            <LanguageSwitcher />
             <div className="flex-1" />
             {user ? (
               <Button variant="ghost" size="sm" onClick={handleLogout} className="tap-target hover:bg-destructive/10 hover:text-destructive">
