@@ -370,6 +370,7 @@
   },
   "Pricing": {
     "title": "Pricing",
+    "metaDescription": "tur2tur pricing plans: free, single tournament, and unlimited subscription. Start creating tournaments today.",
     "subtitle": "Start free, upgrade when you need more",
     "free": "Free",
     "freeDesc": "Perfect for getting started",
@@ -482,5 +483,16 @@
     "changesDesc": "We may update these terms from time to time. Significant changes will be notified via email or a prominent notice on the platform. Continued use after changes constitutes acceptance.",
     "contactTitle": "9. Contact",
     "contactDesc": "For questions about these terms, contact us at"
+  },
+  "ErrorPage": {
+    "title": "Something went wrong",
+    "description": "An unexpected error occurred. Please try again.",
+    "retry": "Try again"
+  },
+  "CookieConsent": {
+    "message": "We use cookies for analytics to improve your experience.",
+    "accept": "Accept",
+    "decline": "Decline",
+    "learnMore": "Learn more"
   }
 }

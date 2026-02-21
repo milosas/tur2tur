@@ -7,6 +7,7 @@ import Script from "next/script";
 import { routing } from "@/i18n/routing";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { CookieConsent } from "@/components/CookieConsent";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import "../globals.css";
 
@@ -160,6 +161,7 @@ export default async function LocaleLayout({ children, params }: Props) {
                 {children}
               </main>
               <Footer />
+              <CookieConsent />
             </div>
           </NextIntlClientProvider>
         </ThemeProvider>

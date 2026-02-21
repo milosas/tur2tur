@@ -370,6 +370,7 @@
   },
   "Pricing": {
     "title": "Cenas",
+    "metaDescription": "tur2tur cenu plāni: bezmaksas, vienreizējs turnīrs un neierobežota abonēšana. Sāciet veidot turnīrus jau šodien.",
     "subtitle": "Sāciet bez maksas, jauniniet kad nepieciešams vairāk",
     "free": "Bezmaksas",
     "freeDesc": "Ideāli iesācējiem",
@@ -482,5 +483,16 @@
     "changesDesc": "Mēs varam periodiski atjaunināt šos noteikumus. Par būtiskām izmaiņām paziņosim e-pastā vai ar pamanāmu paziņojumu platformā. Turpmāka lietošana pēc izmaiņām nozīmē piekrišanu.",
     "contactTitle": "9. Kontakti",
     "contactDesc": "Jautājumos par šiem noteikumiem sazinieties"
+  },
+  "ErrorPage": {
+    "title": "Kaut kas nogāja greizi",
+    "description": "Radās neparedzēta kļūda. Lūdzu, mēģiniet vēlreiz.",
+    "retry": "Mēģināt vēlreiz"
+  },
+  "CookieConsent": {
+    "message": "Mēs izmantojam sīkdatnes analītikai, lai uzlabotu jūsu pieredzi.",
+    "accept": "Piekrist",
+    "decline": "Noraidīt",
+    "learnMore": "Uzzināt vairāk"
   }
 }

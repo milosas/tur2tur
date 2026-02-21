@@ -5,10 +5,13 @@ import { PageBanner } from "@/components/PageBanner";
 import type { SubscriptionTier } from "@/lib/types";
 import type { Metadata } from "next";
 
-export const metadata: Metadata = {
-  title: "Kainos",
-  description: "tur2tur kainų planai: nemokamas, vienkartinis ir neribota prenumerata. Pradėkite kurti turnyrus jau šiandien.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("Pricing");
+  return {
+    title: t("title"),
+    description: t("metaDescription"),
+  };
+}
 
 export default async function PricingPage() {
   const t = await getTranslations("Pricing");

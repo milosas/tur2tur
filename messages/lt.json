@@ -370,6 +370,7 @@
   },
   "Pricing": {
     "title": "Kainos",
+    "metaDescription": "tur2tur kainų planai: nemokamas, vienkartinis ir neribota prenumerata. Pradėkite kurti turnyrus jau šiandien.",
     "subtitle": "Pradėkite nemokamai, atnaujinkite kai reikia daugiau",
     "free": "Nemokamas",
     "freeDesc": "Puikus pradžiai",
@@ -482,5 +483,16 @@
     "changesDesc": "Galime periodiškai atnaujinti šias sąlygas. Apie reikšmingus pakeitimus pranešime el. paštu arba ryškiu pranešimu platformoje. Tolimesnis naudojimas po pakeitimų reiškia sutikimą.",
     "contactTitle": "9. Kontaktai",
     "contactDesc": "Dėl klausimų apie šias sąlygas susisiekite"
+  },
+  "ErrorPage": {
+    "title": "Kažkas nutiko",
+    "description": "Įvyko netikėta klaida. Bandykite dar kartą.",
+    "retry": "Bandyti dar kartą"
+  },
+  "CookieConsent": {
+    "message": "Naudojame slapukus analitikai, kad pagerintume jūsų patirtį.",
+    "accept": "Sutinku",
+    "decline": "Atsisakyti",
+    "learnMore": "Sužinoti daugiau"
   }
 }
