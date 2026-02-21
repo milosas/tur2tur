@@ -13,6 +13,9 @@ export default async function TournamentsPage() {
   const supabase = await createClient();
   const t = await getTranslations("Tournaments");
 
+  // Auto-sync tournament statuses based on dates before fetching
+  await supabase.rpc("sync_tournament_statuses");
+
   const { data: tournaments } = await supabase
     .from("tournaments")
     .select("*, profiles(full_name, email, avatar_url), teams(count)")

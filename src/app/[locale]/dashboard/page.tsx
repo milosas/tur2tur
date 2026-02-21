@@ -21,6 +21,9 @@ export default async function DashboardPage() {
     redirect("/auth/login");
   }
 
+  // Auto-sync tournament statuses based on dates before fetching
+  await supabase.rpc("sync_tournament_statuses");
+
   const [{ data: tournaments }, { data: profile }] = await Promise.all([
     supabase
       .from("tournaments")
