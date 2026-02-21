@@ -1,7 +1,8 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { loadStripe } from "@stripe/stripe-js";
+import { trackInitiateCheckout } from "@/lib/analytics";
 import {
   EmbeddedCheckoutProvider,
   EmbeddedCheckout,
@@ -12,6 +13,10 @@ const stripePromise = loadStripe(
 );
 
 export function CheckoutForm({ plan }: { plan: "single" | "unlimited" }) {
+  useEffect(() => {
+    trackInitiateCheckout(plan, plan === "single" ? 5 : 9.9);
+  }, [plan]);
+
   const fetchClientSecret = useCallback(async () => {
     const res = await fetch("/api/checkout", {
       method: "POST",

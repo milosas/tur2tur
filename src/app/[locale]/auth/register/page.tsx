@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { trackCompleteRegistration } from "@/lib/analytics";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -33,7 +34,7 @@ export default function RegisterPage() {
     if (error) {
       setError(error.message);
     } else {
-      // Auto-login after registration (no email confirmation required)
+      trackCompleteRegistration();
       router.push("/dashboard");
       router.refresh();
     }

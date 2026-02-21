@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
+import { trackViewContent } from "@/lib/analytics";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -79,6 +80,10 @@ export function TournamentDetail({
   const t = useTranslations("Tournaments");
   const tCommon = useTranslations("Common");
   const tDash = useTranslations("Dashboard");
+
+  useEffect(() => {
+    trackViewContent(tournament.name, tournament.id);
+  }, [tournament.id, tournament.name]);
 
   // Accent color helpers
   const ac = tournament.accent_colors ?? [];

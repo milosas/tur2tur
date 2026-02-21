@@ -1,7 +1,9 @@
 "use client";
 
+import { useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
+import { trackLead } from "@/lib/analytics";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -18,6 +20,10 @@ export function PricingCards({
 }) {
   const t = useTranslations("Pricing");
   const router = useRouter();
+
+  useEffect(() => {
+    trackLead();
+  }, []);
 
   function handleCheckout(plan: "single" | "unlimited") {
     router.push(`/pricing/checkout?plan=${plan}`);

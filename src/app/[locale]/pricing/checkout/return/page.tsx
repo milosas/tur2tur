@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { trackPurchase } from "@/lib/analytics";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -17,6 +18,7 @@ export default function CheckoutReturnPage() {
     "loading"
   );
   const [plan, setPlan] = useState<string | null>(null);
+  const tracked = useRef(false);
 
   useEffect(() => {
     if (!sessionId) return;
@@ -26,6 +28,10 @@ export default function CheckoutReturnPage() {
       .then((data) => {
         setStatus(data.status === "complete" ? "complete" : "open");
         setPlan(data.plan);
+        if (data.status === "complete" && data.plan && !tracked.current) {
+          tracked.current = true;
+          trackPurchase(data.plan, data.plan === "single" ? 5 : 9.9);
+        }
       })
       .catch(() => setStatus("open"));
   }, [sessionId]);
