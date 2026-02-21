@@ -20,9 +20,16 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     return { title: "Turnyras nerastas" };
   }
 
+  const description = tournament.description || `${tournament.name} - sporto turnyras platformoje tur2tur`;
+
   return {
     title: tournament.name,
-    description: tournament.description || `${tournament.name} - sporto turnyras platformoje tur2tur`,
+    description,
+    openGraph: {
+      title: tournament.name,
+      description,
+      type: "website",
+    },
   };
 }
 
