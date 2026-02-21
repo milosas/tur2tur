@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /auth/
+Disallow: /dashboard/
+Disallow: /pricing/checkout
+
+Sitemap: https://tur2tur.com/sitemap.xml
