@@ -47,8 +47,9 @@ export default async function TournamentDetailPage({ params }: PageProps) {
     notFound();
   }
 
-  // Block non-public or draft tournaments for non-owners
-  if (tournament.visibility !== "public" || tournament.status === "draft") {
+  // Draft tournaments are only visible to the organizer
+  // Private tournaments are accessible via direct link/QR code (but not listed publicly)
+  if (tournament.status === "draft") {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user || user.id !== tournament.organizer_id) {
       notFound();
